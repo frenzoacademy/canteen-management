@@ -16,7 +16,9 @@ export const createStudent = async (values) => {
 };
 
 export const updateStudent = async ({ id, values }) => {
-  const { data } = await axios.put(`/student/${id}`, values);
+  const { data } = await axios.put(`/student/${id}`, values, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
   return data;
 };
 

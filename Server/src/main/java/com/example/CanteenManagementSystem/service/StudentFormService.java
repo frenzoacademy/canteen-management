@@ -6,7 +6,12 @@ import java.sql.Blob;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -91,7 +96,7 @@ public class StudentFormService {
 //}
 
  public StudentForm addStudent(MultipartFile file, long rfid_Number, String first_name, String last_name,
-			String department, String aadhar_number, long mob_number, String address, String email, Date date_time) throws IOException, SQLException{
+			String department, String aadhar_number, long mob_number, String address, String email, LocalDate date_time) throws IOException, SQLException{
 	StudentForm s=new StudentForm();
 	s.setRfid_Number(rfid_Number);
 	s.setFirst_name(first_name);
@@ -115,8 +120,8 @@ public void deleteStudent(int student_id) {
 	studentRepo.deleteById(student_id);
 	
 }
-
-/*public StudentForm updateStudentByField(int id, Map<String, Object> fields) {
+/*
+public StudentForm updateStudentByField(int id, Map<String, Object> fields) {
 		Optional<StudentForm> f=studentRepo.findById(id);
 		if(f.isPresent()) {
 		fields.forEach((key,value)->{
@@ -130,19 +135,16 @@ public void deleteStudent(int student_id) {
 	return null;
 }*/
 
-    // 
-	public StudentForm updateStudentByField(int id, StudentForm stform) {
+/*	public StudentForm updateStudentByField(int id, StudentForm stform) {
         Optional<StudentForm> optionalStudent = studentRepo.findById(id);
         if (optionalStudent.isPresent()) {
             StudentForm student = optionalStudent.get();
 
-            // Get the fields from stform and update the corresponding fields in student
             for (Field field : StudentForm.class.getDeclaredFields()) {
                 field.setAccessible(true);
                 try {
                     Object value = field.get(stform);
                     if (value != null) {
-                        // Special handling for Date fields
                         if (field.getType() == Date.class && value instanceof String) {
                             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
                             Date parsedDate = formatter.parse((String) value);
@@ -153,24 +155,73 @@ public void deleteStudent(int student_id) {
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    // Handle the exception as per your requirement
                 }
             }
 
             try {
-                // Save the updated student entity
                 return studentRepo.save(student);
             } catch (Exception e) {
                 e.printStackTrace();
-                // Handle the exception as per your requirement
             }
-        } else {
-            // Handle the case when the student with the given id is not found
-            // You might want to throw an exception or return an appropriate response
-        }
+        } 
 
         return null; // This line will never be reached if the student is saved successfully
+    }*/
+
+
+public void updateStudentFields(StudentForm student, Map<String, Object> fields) throws IllegalAccessException, NoSuchFieldException, SerialException, SQLException, IOException {
+    for (Map.Entry<String, Object> entry : fields.entrySet()) {
+        String fieldName = entry.getKey();
+        Object value = entry.getValue();
+        System.out.println(fieldName+"--------------");
+        
+        
+        try {
+            Field field = student.getClass().getDeclaredField(fieldName);
+            field.setAccessible(true);
+            
+           /* if(fieldName.equalsIgnoreCase("file")) {
+                field = student.getClass().getDeclaredField("image");
+                field.setAccessible(true);
+            	MultipartFile file = (MultipartFile) fields.get("image");
+                if (!file.isEmpty()){
+            		byte[] photoBytes = file.getBytes();
+            		Blob photoBlob = new SerialBlob(photoBytes);
+            		field.set(student,photoBlob);
+            	}
+            }*/
+            if ("file".equals(fieldName)) { // Check if the field is 'file'
+                MultipartFile file = (MultipartFile) value;
+                if (!file.isEmpty()) {
+                    byte[] photoBytes = file.getBytes();
+                    Blob photoBlob = new SerialBlob(photoBytes);
+                    field.set(student, photoBlob);
+                } else {
+                	field.set(student, null);
+                }
+            }
+        if (field.getType() == LocalDate.class && value instanceof String) {
+            // Convert String to LocalDate
+            LocalDate newValue = LocalDate.parse((String) value, DateTimeFormatter.ISO_DATE);
+            field.set(student, newValue);
+        } else if (field.getType() == long.class && value instanceof String) {
+            // Convert String to long
+            long newValue = Long.parseLong((String) value);
+            field.set(student, newValue);
+        } else {
+            field.set(student, value);
+        }
+    }  catch (NoSuchFieldException e) {
+        // Handle the case where the field doesn't exist
+        System.out.println("Field '" + fieldName + "' does not exist in StudentForm class.");
     }
+}}
+
+
+
+
+public StudentForm saveStudent(StudentForm student) {
+    return studentRepo.save(student);
 }
 	
 

@@ -2,12 +2,10 @@ package com.example.CanteenManagementSystem.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.sql.Blob;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -27,9 +25,11 @@ public class StudentForm {
     private long mob_number;
     private String address;
     private String email;
-    private Date date_time;
+    private LocalDate date_time;
+    
     
     @Lob
+    @JsonIgnore
     private Blob image;
 	
 	@JsonIgnore // Ignore imageData during serialization
@@ -43,7 +43,7 @@ public class StudentForm {
     )
     private List<PurchaseOrder> purchaseOrders;
 	public StudentForm(int student_id, long rfid_Number, String first_name, String last_name, String department,
-	String aadhar_number, long mob_number, String address, String email, Date date_time, Blob image,
+	String aadhar_number, long mob_number, String address, String email, LocalDate date_time, Blob image,
 			List<PurchaseOrder> purchaseOrders) {
 		super();
 		this.student_id = student_id;
@@ -117,10 +117,10 @@ public class StudentForm {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	public Date getDate_time() {
+	public LocalDate getDate_time() {
 		return date_time;
 	}
-	public void setDate_time(Date date_time) {
+	public void setDate_time(LocalDate date_time) {
 		this.date_time = date_time;
 	}
 	public Blob getImage() {
@@ -142,6 +142,14 @@ public class StudentForm {
 	}
 	public void setImageData(byte[] imageData) {
 		this.imageData = imageData;
+	}
+	@Override
+	public String toString() {
+		return "StudentForm [student_id=" + student_id + ", rfid_Number=" + rfid_Number + ", First_name=" + First_name
+				+ ", Last_name=" + Last_name + ", department=" + department + ", aadhar_number=" + aadhar_number
+				+ ", mob_number=" + mob_number + ", address=" + address + ", email=" + email + ", date_time="
+				+ date_time + ", image=" + image + ", imageData=" + Arrays.toString(imageData) + ", purchaseOrders="
+				+ purchaseOrders + "]";
 	}
 
 	
