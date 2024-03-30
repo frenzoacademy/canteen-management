@@ -1,0 +1,262 @@
+"use client";
+import { useEffect, useRef, useState } from "react";
+import { useForm } from "react-hook-form";
+
+const CanteenUserForm = () => {
+  const [image, setImage] = useState([]);
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    control,
+    formState: { errors },
+    reset,
+  } = useForm({
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      aadharNumber: "",
+      address: "",
+      date: "",
+      phoneNumber: "",
+      email: "",
+      photo: "",
+      password: "",
+      confirmPassword: "",
+    },
+  });
+  const passwordValue = watch("password");
+
+  useEffect(() => {
+    setValue("photo", image);
+  }, [image, setValue]);
+
+  const onSubmit = (data) => {
+    console.log(data);
+    reset();
+  };
+  const cancel = () => {
+    reset();
+  };
+  return (
+    <div>
+      <h1 className="text-xl font-bold mb-5">Canteen User Form</h1>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="grid sm:grid-cols-3 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div>
+            <label
+              htmlFor="firstName"
+              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >
+              First name
+            </label>
+            <input
+              type="text"
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="First name"
+              {...register("firstName", {
+                required: "This filed is mandatory",
+              })}
+            />
+            <h1 className="mt-1 text-sm text-red-600 font-medium">
+              {errors?.firstName?.message}
+            </h1>
+          </div>
+          <div>
+            <label
+              htmlFor="lastName"
+              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >
+              Last name
+            </label>
+            <input
+              type="text"
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="Last Name"
+              {...register("lastName", {
+                required: "This filed is mandatory",
+              })}
+            />
+            <h1 className="mt-1 text-sm text-red-600 font-medium">
+              {errors?.lastName?.message}
+            </h1>
+          </div>
+          <div>
+            <label
+              htmlFor="date"
+              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >
+              Date
+            </label>
+            <input
+              type="date"
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="Name"
+              {...register("date", {
+                required: "This filed is mandatory",
+              })}
+            />
+            <h1 className="mt-1 text-sm text-red-600 font-medium">
+              {errors?.date?.message}
+            </h1>
+          </div>
+
+          <div>
+            <label
+              htmlFor="Image"
+              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >
+              Image{" "}
+            </label>
+            <input
+              type="file"
+              onChange={(e) => setImage(e.target.files[0])}
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="email"
+              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >
+              Email
+            </label>
+            <input
+              type="email"
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="example@gmail.com"
+              {...register("email", {
+                required: "This filed is mandatory",
+                pattern: {
+                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                  message: "Invalid email address",
+                },
+              })}
+            />
+            <h1 className="mt-1 text-sm text-red-600 font-medium">
+              {errors?.email?.message}
+            </h1>
+          </div>
+
+          <div>
+            <label
+              htmlFor="phoneNumber"
+              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >
+              Phone Number
+            </label>
+            <input
+              type="number"
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="9874561230"
+              {...register("phoneNumber", {
+                required: "This filed is mandatory",
+                minLength: {
+                  value: 10,
+                  message: "Invalid phone number",
+                },
+                maxLength: {
+                  value: 10,
+                  message: "Invalid phone number",
+                },
+              })}
+            />
+            <h1 className="mt-1 text-sm text-red-600 font-medium">
+              {errors?.phoneNumber?.message}
+            </h1>
+          </div>
+          <div>
+            <label
+              htmlFor="aadhar"
+              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >
+              Aadhar Number
+            </label>
+            <input
+              type="number"
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="1234-4668-9876"
+              {...register("aadharNumber")}
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="address"
+              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >
+              Address
+            </label>
+            <input
+              type="text"
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="Address"
+              {...register("address")}
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="password"
+              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >
+              Password
+            </label>
+            <input
+              type="password"
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="Password"
+              {...register("password", {
+                required: "This field is required",
+                minLength: {
+                  value: 8,
+                  message: "Password must have at least 8 characters",
+                },
+              })}
+            />
+            <h1 className="mt-1 text-sm text-red-600 font-medium">
+              {errors?.password?.message}
+            </h1>
+          </div>
+          <div>
+            <label
+              htmlFor="confirmPassword"
+              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >
+              Confirm Password
+            </label>
+            <input
+              type="password"
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="Confirm password"
+              {...register("confirmPassword", {
+                required: "This field is required",
+                validate: (value) =>
+                  value === passwordValue || "The passwords do not match",
+              })}
+            />
+            <h1 className="mt-1 text-sm text-red-600 font-medium">
+              {errors?.confirmPassword?.message}
+            </h1>
+          </div>
+        </div>
+        <div className="border-t border-t-slate-200  mt-3 flex justify-between">
+          <button
+            type="submit"
+            onClick={() => cancel()}
+            className="px-4 py-2 bg-red-600 text-white rounded-lg mt-3"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            className="px-4 py-2 bg-black text-white rounded-lg mt-3"
+          >
+            Submit
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+};
+
+export default CanteenUserForm;
