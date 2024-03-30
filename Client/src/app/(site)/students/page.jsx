@@ -8,48 +8,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-const employees = [
-  {
-    firstName: "John",
-    lastName: "Doe",
-    aadharNumber: "1234 5678 9012",
-    address: "123 Main St, Cityville",
-    date: "1990-01-01",
-    department: "IT",
-    phoneNumber: "123-456-7890",
-    rfid: "RFID123",
-    email: "john.doe@example.com",
-    image:
-      "https://images.pexels.com/photos/2859616/pexels-photo-2859616.jpeg?auto=compress&cs=tinysrgb&w=600",
-  },
-  {
-    firstName: "Alice",
-    lastName: "Smith",
-    aadharNumber: "9876 5432 1098",
-    address: "456 Elm St, Townsville",
-    date: "1985-05-15",
-    department: "HR",
-    phoneNumber: "987-654-3210",
-    rfid: "RFID456",
-    email: "alice.smith@example.com",
-    image:
-      "https://images.pexels.com/photos/2681751/pexels-photo-2681751.jpeg?auto=compress&cs=tinysrgb&w=600",
-  },
-  {
-    firstName: "Michael",
-    lastName: "Johnson",
-    aadharNumber: "2468 1357 9021",
-    address: "789 Oak St, Villageton",
-    date: "1982-11-30",
-    department: "Finance",
-    phoneNumber: "555-123-4567",
-    rfid: "RFID789",
-    email: "michael.johnson@example.com",
-    image:
-      "https://images.pexels.com/photos/2887718/pexels-photo-2887718.jpeg?auto=compress&cs=tinysrgb&w=600",
-  },
-];
-
 const Page = () => {
   const { data, isLoading } = useGetStudents();
   const { mutate } = useRemoveStudent();
