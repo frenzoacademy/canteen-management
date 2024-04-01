@@ -20,20 +20,40 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.CanteenManagementSystem.model.CanteenManager;
 import com.example.CanteenManagementSystem.model.NotFoundException;
 import com.example.CanteenManagementSystem.repository.CanteenManagerRepo;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class CanteenManagerService {
 	@Autowired 
 	CanteenManagerRepo canteenRepo;
 
-	public List<CanteenManager> getManager() {
-		List<CanteenManager> cm=canteenRepo.findAll();
-		if(cm.size()>0) {
-		return cm;
-	}else {
-		throw new NotFoundException("no records found");
-	}
-	}
+	 public List<CanteenManager> getAllManagers() throws Exception {
+	        List<CanteenManager> managers = canteenRepo.findAll();
+	        if (!managers.isEmpty()) {
+	            // Configure ObjectMapper to use custom serializer
+	            ObjectMapper objectMapper = new ObjectMapper();
+	            SimpleModule module = new SimpleModule();
+	            module.addSerializer(Blob.class, new BlobSerializer());
+	            objectMapper.registerModule(module);
+
+	            // Convert CanteenManager objects to JSON with image data included
+	            try {
+	                String jsonManagers = objectMapper.writeValueAsString(managers);
+	                System.out.println(jsonManagers); // For debugging purposes
+	                return managers;
+	            } catch (JsonProcessingException e) {
+	                // Handle JSON serialization error
+	                e.printStackTrace(); // Handle or log the exception
+	                throw new Exception("Error processing JSON");
+	            }
+	        } else {
+	            throw new EntityNotFoundException("No records found");
+	        }
+	    }
 
 
 	 public CanteenManager addManager(MultipartFile image, String first_name, String last_name, String email,
@@ -120,12 +140,33 @@ public class CanteenManagerService {
 	}
 	
 	
-	public List<CanteenManager> getAllCanteenManagers() {
+	/*public List<CanteenManager> getAllCanteenManagers() {
         List<CanteenManager> canteenManagers = canteenRepo.findAll();
         if (!canteenManagers.isEmpty()) {
             return canteenManagers;
         } else {
             throw new NotFoundException("No records found");
+        }
+    }*/
+	public List<CanteenManager> getAllCanteenManagers() throws Exception {
+        List<CanteenManager> managers = canteenRepo.findAll();
+        if (managers.isEmpty()) {
+            throw new EntityNotFoundException("No records found");
+        }
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        SimpleModule module = new SimpleModule();
+        module.addSerializer(Blob.class, new BlobSerializer());
+        objectMapper.registerModule(module);
+
+        try {
+            // Convert FoodInventory objects to JSON with image data included
+            String jsonFoods = objectMapper.writeValueAsString(managers);
+            System.out.println(jsonFoods); // For debugging purposes
+            return managers;
+        } catch (JsonProcessingException e) {
+            e.printStackTrace(); // Handle or log the exception
+            throw new Exception("Error processing JSON");
         }
     }
 
