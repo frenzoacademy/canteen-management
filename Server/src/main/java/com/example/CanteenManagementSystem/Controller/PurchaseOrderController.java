@@ -1,5 +1,6 @@
 package com.example.CanteenManagementSystem.Controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,11 +34,21 @@ public class PurchaseOrderController {
 		return new ResponseEntity<List<PurchaseOrder>>(purchaseorder, HttpStatus.OK);
 	}
 
-	@PostMapping
+	/*@PostMapping
 	public ResponseEntity<PurchaseOrder> addDetails(@RequestBody PurchaseOrder order) {
 		PurchaseOrder p = purchaseService.addOrder(order);
 		return new ResponseEntity<PurchaseOrder>(p, HttpStatus.CREATED);
+	}*/
+	@PostMapping
+	public ResponseEntity<List<PurchaseOrder>> addBulkOrders(@RequestBody List<PurchaseOrder> orders) {
+	    List<PurchaseOrder> addedOrders = new ArrayList<>();
+	    for (PurchaseOrder order : orders) {
+	        PurchaseOrder addedOrder = purchaseService.addOrder(order);
+	        addedOrders.add(addedOrder);
+	    }
+	    return new ResponseEntity<>(addedOrders, HttpStatus.CREATED);
 	}
+
 
 	@PutMapping("/{id}")
 	public ResponseEntity<PurchaseOrder> updatePurchaseOrder(@PathVariable int id,

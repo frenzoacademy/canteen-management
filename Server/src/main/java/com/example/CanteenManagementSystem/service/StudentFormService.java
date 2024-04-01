@@ -54,47 +54,6 @@ public class StudentFormService {
 		}
 		return null;
 	}
-//public StudentForm updateStudents(StudentForm student) {
-//	Optional<StudentForm> s=studentRepo.findById((int) student.getStudent_id());
-//	if(s.isPresent()) {
-//		StudentForm sf=s.get();
-//		if(student.getFirst_name()!=null) {
-//			sf.setFirst_name(student.getFirst_name());
-//		}
-//		if(student.getLast_name()!=null) {
-//			sf.setFirst_name(student.getLast_name());
-//		}
-//		if(student.getAadhar_number()!=0) {
-//			sf.setAadhar_number(student.getAadhar_number());
-//		if(student.getAddress()!=null) {
-//			sf.setAddress(student.getAddress());
-//		}
-//		if(student.getDepartment()!=null) {
-//			sf.setDepartment(student.getDepartment());
-//		}
-//		if(student.getMob_number()!=0) {
-//			sf.setMob_number(student.getMob_number());
-//		}
-//		if(student.getEmail()!=null) {
-//			sf.setEmail(student.getEmail());
-//		}
-//		if(student.getDate_time()!=null) {
-//			sf.setDate_time(student.getDate_time());
-//		}
-//		if(student.getImage()!=null) {
-//			sf.setImage(student.getImage());
-//		}
-//		studentRepo.save(sf);
-//		return sf;
-//		}
-//		else {
-//			student=studentRepo.save(student);
-//			return student;
-//		}
-//	}
-//
-//	return null;
-//}
 
 	public StudentForm addStudent(MultipartFile file, long rfid_Number, String first_name, String last_name,
 			String department, String aadhar_number, long mob_number, String address, String password, String email,
@@ -124,36 +83,6 @@ public class StudentFormService {
 		studentRepo.deleteById(student_id);
 
 	}
-	/*
-	 * public StudentForm updateStudentByField(int id, Map<String, Object> fields) {
-	 * Optional<StudentForm> f=studentRepo.findById(id); if(f.isPresent()) {
-	 * fields.forEach((key,value)->{ Field
-	 * field=ReflectionUtils.findField(StudentForm.class, key);
-	 * field.setAccessible(true); ReflectionUtils.setField(field, f.get(), value);
-	 * }); return studentRepo.save(f.get()); }
-	 * 
-	 * return null; }
-	 */
-
-	/*
-	 * public StudentForm updateStudentByField(int id, StudentForm stform) {
-	 * Optional<StudentForm> optionalStudent = studentRepo.findById(id); if
-	 * (optionalStudent.isPresent()) { StudentForm student = optionalStudent.get();
-	 * 
-	 * for (Field field : StudentForm.class.getDeclaredFields()) {
-	 * field.setAccessible(true); try { Object value = field.get(stform); if (value
-	 * != null) { if (field.getType() == Date.class && value instanceof String) {
-	 * SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd"); Date
-	 * parsedDate = formatter.parse((String) value); field.set(student, parsedDate);
-	 * } else { field.set(student, value); } } } catch (Exception e) {
-	 * e.printStackTrace(); } }
-	 * 
-	 * try { return studentRepo.save(student); } catch (Exception e) {
-	 * e.printStackTrace(); } }
-	 * 
-	 * return null; // This line will never be reached if the student is saved
-	 * successfully }
-	 */
 
 	public void updateStudentFields(StudentForm student, Map<String, Object> fields)
 			throws IllegalAccessException, NoSuchFieldException, SerialException, SQLException, IOException {
@@ -166,13 +95,6 @@ public class StudentFormService {
 				Field field = student.getClass().getDeclaredField(fieldName);
 				field.setAccessible(true);
 
-				/*
-				 * if(fieldName.equalsIgnoreCase("file")) { field =
-				 * student.getClass().getDeclaredField("image"); field.setAccessible(true);
-				 * MultipartFile file = (MultipartFile) fields.get("image"); if
-				 * (!file.isEmpty()){ byte[] photoBytes = file.getBytes(); Blob photoBlob = new
-				 * SerialBlob(photoBytes); field.set(student,photoBlob); } }
-				 */
 				if ("file".equals(fieldName)) { // Check if the field is 'file'
 					MultipartFile file = (MultipartFile) value;
 					if (!file.isEmpty()) {

@@ -1,5 +1,6 @@
 package com.example.CanteenManagementSystem.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,6 +44,14 @@ public class PurchaseOrderService {
 		}
 
 	}
+	 public List<PurchaseOrder> addBulkOrders(List<PurchaseOrder> orders) {
+	        List<PurchaseOrder> addedOrders = new ArrayList<>();
+	        for (PurchaseOrder order : orders) {
+	            PurchaseOrder addedOrder = purchaseRepo.save(order);
+	            addedOrders.add(addedOrder);
+	        }
+	        return addedOrders;
+	    }
 
 	public PurchaseOrder updatePurchaseOrder(int id, PurchaseOrder updatedPurchaseOrder) {
 		return purchaseRepo.findById(id).map((PurchaseOrder purchaseOrder) -> {
