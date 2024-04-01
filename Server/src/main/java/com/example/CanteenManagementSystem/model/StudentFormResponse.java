@@ -14,7 +14,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @Data
-@NoArgsConstructor
 public class StudentFormResponse {
 	@JsonProperty("student_id")
 	private int student_id;

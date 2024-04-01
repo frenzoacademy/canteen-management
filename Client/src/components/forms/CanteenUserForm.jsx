@@ -1,9 +1,15 @@
 "use client";
+import {
+  useAddCanteenUser,
+  useEditCanteenUser,
+} from "@/features/canteenUser/canteenUser.hooks";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 
-const CanteenUserForm = () => {
+const CanteenUserForm = ({ editId }) => {
   const [image, setImage] = useState([]);
+  const { mutate: addCanteenManager } = useAddCanteenUser();
+  const { mutate: updateCanteenManager } = useEditCanteenUser();
   const {
     register,
     handleSubmit,
@@ -21,7 +27,7 @@ const CanteenUserForm = () => {
       date: "",
       phoneNumber: "",
       email: "",
-      photo: "",
+      file: "",
       password: "",
       confirmPassword: "",
     },
@@ -29,12 +35,24 @@ const CanteenUserForm = () => {
   const passwordValue = watch("password");
 
   useEffect(() => {
-    setValue("photo", image);
+    setValue("file", image);
   }, [image, setValue]);
 
   const onSubmit = (data) => {
-    console.log(data);
-    reset();
+    try {
+      const formData = new FormData();
+
+      Object.keys(data).forEach((key) => {
+        formData.append(key, data[key]);
+      });
+
+      const response = editId
+        ? updateCanteenManager({ id: editId, values: data })
+        : addCanteenManager(formData);
+      reset();
+    } catch (error) {
+      console.error("Error submitting form data:", error);
+    }
   };
   const cancel = () => {
     reset();

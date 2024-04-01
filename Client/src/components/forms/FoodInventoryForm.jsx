@@ -6,7 +6,7 @@ import {
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
-const FoodInventoryForm = () => {
+const FoodInventoryForm = ({ editId }) => {
   const { mutate: addInventory } = useAddFoodInventory();
   const { mutate: updateInventory } = useEditFoodInventory();
   const [image, setImage] = useState([]);
@@ -20,12 +20,12 @@ const FoodInventoryForm = () => {
   } = useForm({
     defaultValues: {
       name: "",
-      photo: "",
+      file: "",
       quantity: 0,
-      isAvailable: false,
+      isAvailability: false,
       breakfast: false,
       lunch: false,
-      snack: false,
+      eveningfood: false,
       dinner: false,
       allTime: false,
       amount: "",
@@ -33,7 +33,7 @@ const FoodInventoryForm = () => {
   });
 
   useEffect(() => {
-    setValue("photo", image);
+    setValue("file", image);
   }, [image, setValue]);
 
   const onSubmit = (data) => {
@@ -41,17 +41,12 @@ const FoodInventoryForm = () => {
       const formData = new FormData();
 
       Object.keys(data).forEach((key) => {
-        if (key === "file" && data[key] instanceof File) {
-          formData.append(key, data[key]);
-        } else {
-          formData.append(key, data[key]);
-        }
+        formData.append(key, data[key]);
       });
 
       const response = editId
         ? updateInventory({ id: editId, values: data })
         : addInventory(formData);
-
       reset();
     } catch (error) {
       console.error("Error submitting form data:", error);
@@ -121,10 +116,10 @@ const FoodInventoryForm = () => {
               <input
                 type="checkbox"
                 className="h-5 w-5 accent-black"
-                {...register("isAvailable")}
+                {...register("isAvailability")}
               />{" "}
               <label
-                htmlFor="isAvailable"
+                htmlFor="isAvailability"
                 className="text-sm font-medium text-gray-900 dark:text-white"
               >
                 Is Available
@@ -183,13 +178,13 @@ const FoodInventoryForm = () => {
                 <input
                   type="checkbox"
                   className="h-5 w-5 accent-black"
-                  {...register("snack")}
+                  {...register("eveningfood")}
                 />{" "}
                 <label
-                  htmlFor="snack"
+                  htmlFor="eveningfood"
                   className="text-sm font-medium text-gray-900 dark:text-white"
                 >
-                  Snacks
+                  Snakcs
                 </label>
               </div>
               <div className="flex items-center justify-start gap-5 border-2 border-black px-4 py-4 rounded-md">

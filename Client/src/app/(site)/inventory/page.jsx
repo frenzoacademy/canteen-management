@@ -1,10 +1,12 @@
 "use client";
 import PageHeader from "@/components/PageHeader";
+import { useGetFoodInventories } from "@/features/foodInventory/foodInventory.hooks";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 const Page = () => {
   const route = useRouter();
+  const { data } = useGetFoodInventories();
   const food = [
     {
       name: "Food 1",
@@ -52,7 +54,7 @@ const Page = () => {
             </tr>
           </thead>
           <tbody>
-            {food.map((item, index) => (
+            {data?.map((item, index) => (
               <tr
                 key={index}
                 className={(index + 1) % 2 === 0 ? "bg-gray-100" : "bg-white"}
@@ -68,8 +70,8 @@ const Page = () => {
                   <h1 className="font-medium text-base">{item.name}</h1>
                 </td>
 
-                <td className=" px-4 py-2">{item.quantity_in_stock}</td>
-                <td className=" px-4 py-2">{item.availability}</td>
+                <td className=" px-4 py-2">{item.quantity}</td>
+                <td className=" px-4 py-2">{item.isAvailability}</td>
                 <td className=" px-4 py-2">$ {item.amount}</td>
                 <td className=" px-4 py-2 text-center">
                   <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
