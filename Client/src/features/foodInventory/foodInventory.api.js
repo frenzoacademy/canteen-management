@@ -1,4 +1,4 @@
-import { axios } from "@/libs/axios";
+import { axios } from "@/app/libs/axios";
 
 export const getFoodInventories = async () => {
   const { data } = await axios.get(`/foodInventory`);
