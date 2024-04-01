@@ -1,8 +1,14 @@
 "use client";
+import {
+  useAddFoodInventory,
+  useEditFoodInventory,
+} from "@/features/foodInventory/foodInventory.hooks";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
 const FoodInventoryForm = () => {
+  const { mutate: addInventory } = useAddFoodInventory();
+  const { mutate: updateInventory } = useEditFoodInventory();
   const [image, setImage] = useState([]);
 
   const {
@@ -31,8 +37,25 @@ const FoodInventoryForm = () => {
   }, [image, setValue]);
 
   const onSubmit = (data) => {
-    console.log(data);
-    reset();
+    try {
+      const formData = new FormData();
+
+      Object.keys(data).forEach((key) => {
+        if (key === "file" && data[key] instanceof File) {
+          formData.append(key, data[key]);
+        } else {
+          formData.append(key, data[key]);
+        }
+      });
+
+      const response = editId
+        ? updateInventory({ id: editId, values: data })
+        : addInventory(formData);
+
+      reset();
+    } catch (error) {
+      console.error("Error submitting form data:", error);
+    }
   };
 
   const cancel = () => {

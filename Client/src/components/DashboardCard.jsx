@@ -37,8 +37,8 @@ const DashboardCard = () => {
     <div className="grid grid-cols-4 gap-5">
       {stats?.map((item, index) => (
         <div className="border p-5 rounded-md flex flex-col items-start gap-5">
-          <div className={`p-3 rounded-full bg-${item?.color}-300`}>
-            <item.icon className={`h-5 w-5 text-${item?.color}-600`} />
+          <div className={`p-3 rounded-full bg-${item.color}-300`}>
+            <item.icon className={`h-5 w-5 text-${item.color}-600`} />
           </div>
           <div className=" flex flex-col items-start gap-2">
             <h1 className="text-lg font-semibold">{item?.count}</h1>

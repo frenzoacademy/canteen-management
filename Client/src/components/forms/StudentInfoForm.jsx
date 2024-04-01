@@ -24,16 +24,16 @@ const StudentInfoForm = ({ editId }) => {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      First_name: editId && data ? data.first_name : "",
-      Last_name: editId && data ? data.last_name : "",
-      aadhar_number: editId && data ? data.aadhar_number : "",
-      address: editId && data ? data.address : "",
-      date_time: editId && data ? data.date_time : "",
-      department: editId && data ? data.department : "",
-      mob_number: editId && data ? data.mob_number : "",
-      rfid_Number: editId && data ? data.rfid_Number : code,
-      email: editId && data ? data.email : "",
-      file: editId && data ? data.file : "",
+      First_name: "",
+      Last_name: "",
+      aadhar_number: "",
+      address: "",
+      date_time: "",
+      department: "",
+      mob_number: "",
+      rfid_Number: "",
+      email: "",
+      file: "",
     },
   });
   const passwordValue = watch("password");
@@ -47,15 +47,11 @@ const StudentInfoForm = ({ editId }) => {
       setValue("date_time", data.date_time || "");
       setValue("department", data.department || "");
       setValue("mob_number", data.mob_number || "");
-      setValue("rfid_Number", data.rfid_Number || code || "");
+      setValue("rfid_Number", data.rfid_Number || code);
       setValue("email", data.email || "");
       setValue("file", data.file || "");
     }
-  }, [data, editId, setValue, code]);
-
-  useEffect(() => {
-    setValue("rfid_Number", code);
-  }, [code, setValue]);
+  }, [data, editId]);
 
   useEffect(() => {
     setValue("file", image);
@@ -110,6 +106,8 @@ const StudentInfoForm = ({ editId }) => {
               placeholder="First name"
               {...register("First_name", {
                 required: "This filed is mandatory",
+                min: 10,
+                max: 99,
               })}
             />
             <h1 className="mt-1 text-sm text-red-600 font-medium">
@@ -133,6 +131,26 @@ const StudentInfoForm = ({ editId }) => {
             />
             <h1 className="mt-1 text-sm text-red-600 font-medium">
               {errors?.Last_name?.message}
+            </h1>
+          </div>
+          <div>
+            <label
+              htmlFor="rfid-number"
+              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >
+              RFID Number
+            </label>
+            <input
+              type="number"
+              disabled
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="RFID"
+              {...register("rfid_Number", {
+                required: "This filed is mandatory",
+              })}
+            />
+            <h1 className="mt-1 text-sm text-red-600 font-medium">
+              {errors?.rfid_Number?.message}
             </h1>
           </div>
           <div>
@@ -208,26 +226,7 @@ const StudentInfoForm = ({ editId }) => {
               {errors?.email?.message}
             </h1>
           </div>
-          <div>
-            <label
-              htmlFor="rfid-number"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              RFID Number
-            </label>
-            <input
-              type="number"
-              disabled
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="RFID"
-              {...register("rfid_Number", {
-                required: "This filed is mandatory",
-              })}
-            />
-            <h1 className="mt-1 text-sm text-red-600 font-medium">
-              {errors?.rfid_Number?.message}
-            </h1>
-          </div>
+
           <div>
             <label
               htmlFor="phoneNumber"

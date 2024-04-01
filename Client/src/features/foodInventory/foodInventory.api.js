@@ -16,7 +16,9 @@ export const createFoodInventory = async (values) => {
 };
 
 export const updateFoodInventory = async ({ id, values }) => {
-  const { data } = await axios.put(`/food-inventory/${id}`, values);
+  const { data } = await axios.put(`/food-inventory/${id}`, values, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
   return data;
 };
 
