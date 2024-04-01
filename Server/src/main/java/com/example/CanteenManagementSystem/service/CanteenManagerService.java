@@ -1,14 +1,21 @@
 package com.example.CanteenManagementSystem.service;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
+import java.sql.Blob;
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.sql.rowset.serial.SerialBlob;
+import javax.sql.rowset.serial.SerialException;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.util.ReflectionUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ReflectionUtils.FieldFilter;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.CanteenManagementSystem.model.CanteenManager;
 import com.example.CanteenManagementSystem.model.NotFoundException;
@@ -29,74 +36,75 @@ public class CanteenManagerService {
 	}
 
 
-	public CanteenManager addManager(CanteenManager manager) {
-		 CanteenManager c = canteenRepo.save(manager);
-			return c;
-		}
+	 public CanteenManager addManager(MultipartFile image, String first_name, String last_name, String email,
+	            String address, long aadhar_number, String password, long mob_number)
+	            throws IOException, SerialException, SQLException {
+	        CanteenManager manager = new CanteenManager();
+	        manager.setFirst_name(first_name);
+	        manager.setLast_name(last_name);
+	        manager.setEmail(email);
+	        manager.setAddress(address);
+	        manager.setAadhar_number(aadhar_number);
+	        manager.setPassword(password);
+	        manager.setMob_number(mob_number);
+
+	        if (image != null && !image.isEmpty()) {
+	            byte[] photoBytes = image.getBytes();
+	            Blob photoBlob = new SerialBlob(photoBytes);
+	            manager.setImage(photoBlob);
+	        }
+
+	        return canteenRepo.save(manager);
+	    }
 
 		
 	
 
-	public void deleteManger(int id) {
+	public void deleteCanteenManager(int id) {
 		canteenRepo.deleteById(id);
 		
 	}
 
 
-//	public CanteenManager updateManager(CanteenManager manager) {
-//		Optional<CanteenManager> cm=canteenRepo.findById(manager.getId());{
-//			if(cm.isPresent()) {
-//				CanteenManager c=cm.get();
-//				if(manager.getFirst_name()!=null) {
-//					c.setFirst_name(manager.getFirst_name());
-//				}
-//				if(manager.getLast_name()!=null) {
-//					c.setFirst_name(manager.getLast_name());
-//
-//			}
-//				if(manager.getRole()!=null) {
-//					c.setRole(manager.getRole());
-//
-//				}
-//				if(manager.getAddress()!=null) {
-//					c.setAddress(manager.getAddress());
-//
-//		}
-//				if(manager.getAadhar_number()!=0) {
-//					c.setAadhar_number(manager.getAadhar_number());
-//				}
-//					if(manager.getPassword()!=null) {
-//						c.setPassword(manager.getPassword());
-//					}
-//					if(manager.getConfirm_password()!=null) {
-//						c.setConfirm_password(manager.getConfirm_password());
-//					}
-//					 if(manager.getMob_number()!=0) {
-//						 c.setMob_number(manager.getMob_number());
-//					 }
-//					 canteenRepo.save(c);
-//					 return c;
-//					}
-//			else {
-//				manager=canteenRepo.save(manager);
-//				return manager;
-//			}
-//
-//		}}
-//
-//
-	public CanteenManager updateManagerByField(int id, Map<String, Object> fields) {
-		Optional<CanteenManager> c=canteenRepo.findById(id);
-		if(c.isPresent()) {
-			fields.forEach((key,value)->{
-				Field field=ReflectionUtils.findRequiredField(CanteenManager.class, key);
-				field.setAccessible(true);
-				ReflectionUtils.setField(field, c.get(), value);
-			});
-		}
-		
-		return canteenRepo.save(c.get());
-	}
+    public void updateManagerFields(CanteenManager manager, Map<String, Object> fields)
+            throws IllegalAccessException, NoSuchFieldException, SerialException, SQLException, IOException {
+        for (Map.Entry<String, Object> entry : fields.entrySet()) {
+            String fieldName = entry.getKey();
+            Object value = entry.getValue();
+
+            try {
+                Field field = manager.getClass().getDeclaredField(fieldName);
+                field.setAccessible(true);
+
+                if ("file".equals(fieldName)) { // Check if the field is 'file'
+                    MultipartFile file = (MultipartFile) value;
+                    if (!file.isEmpty()) {
+                        byte[] photoBytes = file.getBytes();
+                        Blob photoBlob = new SerialBlob(photoBytes);
+                        field.set(manager, photoBlob);
+                    } else {
+                        field.set(manager, null);
+                    }
+                } else if (field.getType() == LocalDate.class && value instanceof String) {
+                    // Convert String to LocalDate
+                    LocalDate newValue = LocalDate.parse((String) value, DateTimeFormatter.ISO_DATE);
+                    field.set(manager, newValue);
+                } else if (field.getType() == long.class && value instanceof String) {
+                    // Convert String to long
+                    long newValue = Long.parseLong((String) value);
+                    field.set(manager, newValue);
+                } else {
+                    field.set(manager, value);
+                }
+            } catch (NoSuchFieldException e) {
+                // Handle the case where the field doesn't exist
+                System.out.println("Field '" + fieldName + "' does not exist in CanteenManager class.");
+            }
+        }
+    }
+    public CanteenManager updateManager(CanteenManager manager) {
+        return canteenRepo.save(manager);
+    }
 
 
 	public CanteenManager getManagerById(int id) {
@@ -109,7 +117,27 @@ public class CanteenManagerService {
 			throw new NotFoundException("no Records found");
 
         }
-	}	
+	}
+	
+	
+	public List<CanteenManager> getAllCanteenManagers() {
+        List<CanteenManager> canteenManagers = canteenRepo.findAll();
+        if (!canteenManagers.isEmpty()) {
+            return canteenManagers;
+        } else {
+            throw new NotFoundException("No records found");
+        }
+    }
+
+    public CanteenManager getCanteenManagerById(int id) {
+        Optional<CanteenManager> canteenManagerOptional = canteenRepo.findById(id);
+        if (canteenManagerOptional.isPresent()) {
+            return canteenManagerOptional.get();
+        } else {
+            throw new NotFoundException("Canteen manager with ID " + id + " not found");
+        }
+    }
+
 	}
 
 

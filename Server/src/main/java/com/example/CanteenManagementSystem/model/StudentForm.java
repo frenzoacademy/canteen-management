@@ -26,7 +26,7 @@ public class StudentForm {
     private String address;
     private String email;
     private LocalDate date_time;
-    
+    private String password;
     
     @Lob
     @JsonIgnore
@@ -42,9 +42,10 @@ public class StudentForm {
         inverseJoinColumns = @JoinColumn(name = "food_id")
     )
     private List<PurchaseOrder> purchaseOrders;
+	
 	public StudentForm(int student_id, long rfid_Number, String first_name, String last_name, String department,
-	String aadhar_number, long mob_number, String address, String email, LocalDate date_time, Blob image,
-			List<PurchaseOrder> purchaseOrders) {
+			String aadhar_number, long mob_number, String address, String email, LocalDate date_time, String password,
+			Blob image, byte[] imageData, List<PurchaseOrder> purchaseOrders) {
 		super();
 		this.student_id = student_id;
 		this.rfid_Number = rfid_Number;
@@ -56,7 +57,9 @@ public class StudentForm {
 		this.address = address;
 		this.email = email;
 		this.date_time = date_time;
+		this.password = password;
 		this.image = image;
+		this.imageData = imageData;
 		this.purchaseOrders = purchaseOrders;
 	}
 	public StudentForm() {
@@ -150,6 +153,12 @@ public class StudentForm {
 				+ ", mob_number=" + mob_number + ", address=" + address + ", email=" + email + ", date_time="
 				+ date_time + ", image=" + image + ", imageData=" + Arrays.toString(imageData) + ", purchaseOrders="
 				+ purchaseOrders + "]";
+	}
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 	

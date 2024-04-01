@@ -24,7 +24,7 @@ public class FoodInventory {
 	private int quantity;
 
 	@Lob
-	private byte[] photo;
+	private Blob photo;
 	
 	 	@ManyToOne
 	    @JoinColumn(name = "canteenManager_id") // Assuming the foreign key column name
@@ -32,7 +32,7 @@ public class FoodInventory {
 	    
 
 	public FoodInventory(int food_id, String name, int amount, boolean isAvailability, boolean breakfast, boolean lunch,
-			boolean eveningfood, boolean dinner, boolean alltime, int quantity, byte[] photo) {
+			boolean eveningfood, boolean dinner, boolean alltime, int quantity, Blob photo) {
 		super();
 		this.food_id = food_id;
 		this.name = name;
@@ -46,6 +46,7 @@ public class FoodInventory {
 		this.quantity = quantity;
 		this.photo = photo;
 	}
+	
 
 	public FoodInventory() {
 		super();
@@ -132,11 +133,11 @@ public class FoodInventory {
 		this.quantity = quantity;
 	}
 
-	public byte[] getPhoto() {
+	public Blob getPhoto() {
 		return photo;
 	}
 
-	public void setPhoto(byte[] photo) {
+	public void setPhoto(Blob photo) {
 		this.photo = photo;
 	}
 

@@ -96,7 +96,7 @@ public class StudentFormService {
 //}
 
  public StudentForm addStudent(MultipartFile file, long rfid_Number, String first_name, String last_name,
-			String department, String aadhar_number, long mob_number, String address, String email, LocalDate date_time) throws IOException, SQLException{
+			String department, String aadhar_number, long mob_number, String address,String password, String email, LocalDate date_time) throws IOException, SQLException{
 	StudentForm s=new StudentForm();
 	s.setRfid_Number(rfid_Number);
 	s.setFirst_name(first_name);
@@ -104,6 +104,7 @@ public class StudentFormService {
 	s.setDepartment(department);
     s.setAadhar_number(aadhar_number);
     s.setAddress(address);
+    s.setPassword(password);
     s.setMob_number(mob_number);
     s.setEmail(email);
     s.setDate_time(date_time);
