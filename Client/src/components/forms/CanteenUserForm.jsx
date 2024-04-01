@@ -2,14 +2,21 @@
 import {
   useAddCanteenUser,
   useEditCanteenUser,
+  useGetCanteenUser,
 } from "@/features/canteenUser/canteenUser.hooks";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 
 const CanteenUserForm = ({ editId }) => {
   const [image, setImage] = useState([]);
-  const { mutate: addCanteenManager } = useAddCanteenUser();
-  const { mutate: updateCanteenManager } = useEditCanteenUser();
+  const route = useRouter();
+  const { mutate: addCanteenManager, isSuccess: addSuccess } =
+    useAddCanteenUser();
+  const { data } = useGetCanteenUser(editId);
+  const { mutate: updateCanteenManager, isSuccess: editSuccess } =
+    useEditCanteenUser();
+
   const {
     register,
     handleSubmit,
@@ -20,23 +27,37 @@ const CanteenUserForm = ({ editId }) => {
     reset,
   } = useForm({
     defaultValues: {
-      firstName: "",
-      lastName: "",
-      aadharNumber: "",
-      address: "",
-      date: "",
-      phoneNumber: "",
+      first_name: "",
+      last_name: "",
       email: "",
+      address: "",
+      aadhar_number: "",
+      mob_number: "",
       file: "",
       password: "",
-      confirmPassword: "",
     },
   });
-  const passwordValue = watch("password");
+
+  if (addSuccess || editSuccess) {
+    route.push(`/canteen-info`);
+  }
 
   useEffect(() => {
     setValue("file", image);
   }, [image, setValue]);
+
+  useEffect(() => {
+    if (data && editId) {
+      setValue("first_name", data.first_name || "");
+      setValue("last_name", data.last_name || 0);
+      setValue("email", data.email || false);
+      setValue("address", data.address || false);
+      setValue("aadhar_number", data.aadhar_number || false);
+      setValue("mob_number", data.mob_number || false);
+      setValue("password", data.password || false);
+      setValue("file", data.photoBase64 || false);
+    }
+  }, [data, editId]);
 
   const onSubmit = (data) => {
     try {
@@ -73,12 +94,12 @@ const CanteenUserForm = ({ editId }) => {
               type="text"
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="First name"
-              {...register("firstName", {
+              {...register("first_name", {
                 required: "This filed is mandatory",
               })}
             />
             <h1 className="mt-1 text-sm text-red-600 font-medium">
-              {errors?.firstName?.message}
+              {errors?.first_name?.message}
             </h1>
           </div>
           <div>
@@ -92,31 +113,12 @@ const CanteenUserForm = ({ editId }) => {
               type="text"
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Last Name"
-              {...register("lastName", {
+              {...register("last_name", {
                 required: "This filed is mandatory",
               })}
             />
             <h1 className="mt-1 text-sm text-red-600 font-medium">
-              {errors?.lastName?.message}
-            </h1>
-          </div>
-          <div>
-            <label
-              htmlFor="date"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              Date
-            </label>
-            <input
-              type="date"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="Name"
-              {...register("date", {
-                required: "This filed is mandatory",
-              })}
-            />
-            <h1 className="mt-1 text-sm text-red-600 font-medium">
-              {errors?.date?.message}
+              {errors?.last_name?.message}
             </h1>
           </div>
 
@@ -168,7 +170,7 @@ const CanteenUserForm = ({ editId }) => {
               type="number"
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="9874561230"
-              {...register("phoneNumber", {
+              {...register("mob_number", {
                 required: "This filed is mandatory",
                 minLength: {
                   value: 10,
@@ -181,7 +183,7 @@ const CanteenUserForm = ({ editId }) => {
               })}
             />
             <h1 className="mt-1 text-sm text-red-600 font-medium">
-              {errors?.phoneNumber?.message}
+              {errors?.mob_number?.message}
             </h1>
           </div>
           <div>
@@ -195,7 +197,7 @@ const CanteenUserForm = ({ editId }) => {
               type="number"
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="1234-4668-9876"
-              {...register("aadharNumber")}
+              {...register("aadhar_number")}
             />
           </div>
           <div>
@@ -233,27 +235,6 @@ const CanteenUserForm = ({ editId }) => {
             />
             <h1 className="mt-1 text-sm text-red-600 font-medium">
               {errors?.password?.message}
-            </h1>
-          </div>
-          <div>
-            <label
-              htmlFor="confirmPassword"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              Confirm Password
-            </label>
-            <input
-              type="password"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="Confirm password"
-              {...register("confirmPassword", {
-                required: "This field is required",
-                validate: (value) =>
-                  value === passwordValue || "The passwords do not match",
-              })}
-            />
-            <h1 className="mt-1 text-sm text-red-600 font-medium">
-              {errors?.confirmPassword?.message}
             </h1>
           </div>
         </div>

@@ -12,7 +12,6 @@ const StudentInfoForm = ({ editId }) => {
   const { mutate: addStudent } = useAddStudent();
   const { mutate: updateStudent } = useEditStudent();
   const { data } = useGetStudent(editId);
-  const [code, setCode] = useState(null);
   const [image, setImage] = useState([]);
 
   const {
@@ -40,14 +39,14 @@ const StudentInfoForm = ({ editId }) => {
 
   useEffect(() => {
     if (data && editId) {
-      setValue("First_name", data.first_name || "");
-      setValue("Last_name", data.last_name || "");
+      setValue("First_name", data.First_name || "");
+      setValue("Last_name", data.Last_name || "");
       setValue("aadhar_number", data.aadhar_number || "");
       setValue("address", data.address || "");
       setValue("date_time", data.date_time || "");
       setValue("department", data.department || "");
       setValue("mob_number", data.mob_number || "");
-      setValue("rfid_Number", data.rfid_Number || code);
+      setValue("rfid_Number", data.rfid_Number || "");
       setValue("email", data.email || "");
       setValue("file", data.file || "");
     }
@@ -55,11 +54,11 @@ const StudentInfoForm = ({ editId }) => {
 
   useEffect(() => {
     setValue("file", image);
-  }, [image, setValue]);
+  }, [image]);
 
   useScanDetection({
     onComplete: (code) => {
-      setCode(code);
+      watch("rfid_Number", code);
     },
   });
 
