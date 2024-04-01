@@ -10,41 +10,40 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 @Getter
 @Setter
 @Data
 @NoArgsConstructor
 public class StudentFormResponse {
-    @JsonProperty("student_id")
+	@JsonProperty("student_id")
 	private int student_id;
-    @JsonProperty("rfid_Number")
-    private long rfid_Number; 
-    @JsonProperty("First_name")
-    private String First_name;
-    @JsonProperty("Last_name")
-    private String Last_name;
-    
-    @JsonProperty("department")
-    private String department;
-    @JsonProperty("aadhar_number")
-    private String aadhar_number;
-    @JsonProperty("mob_number")
-    private long mob_number;
-    @JsonProperty("address")
-    private String address;
-    @JsonProperty("email")
-    private String email;
-    @JsonProperty("date_time")
-    private LocalDate date_time;
-    @JsonProperty("image")
-    private String image;
-    private List<PurchaseOrder> purchaseOrders;
-    @JsonProperty("password")
-    private String password;
-    
-    
-    
-    public StudentFormResponse() {
+	@JsonProperty("rfid_Number")
+	private long rfid_Number;
+	@JsonProperty("First_name")
+	private String First_name;
+	@JsonProperty("Last_name")
+	private String Last_name;
+
+	@JsonProperty("department")
+	private String department;
+	@JsonProperty("aadhar_number")
+	private String aadhar_number;
+	@JsonProperty("mob_number")
+	private long mob_number;
+	@JsonProperty("address")
+	private String address;
+	@JsonProperty("email")
+	private String email;
+	@JsonProperty("date_time")
+	private LocalDate date_time;
+	@JsonProperty("image")
+	private String image;
+	private List<PurchaseOrder> purchaseOrders;
+	@JsonProperty("password")
+	private String password;
+
+	public StudentFormResponse() {
 		super();
 	}
 
@@ -61,7 +60,7 @@ public class StudentFormResponse {
 		this.address = address;
 		this.email = email;
 		this.date_time = date_time;
-    }
+	}
 
 	public StudentFormResponse(int student_id, long rfid_Number, String first_name, String last_name, String department,
 			String aadhar_number, long mob_number, String address, String email, LocalDate date_time, String image,
@@ -81,7 +80,7 @@ public class StudentFormResponse {
 	}
 
 	public void setImage(String base64Photo) {
-		image=base64Photo;
+		image = base64Photo;
 	}
 
 	@Override
@@ -93,7 +92,7 @@ public class StudentFormResponse {
 	}
 
 	public void setDate_Time(LocalDate date_time2) {
-		this.date_time=date_time2;
+		this.date_time = date_time2;
 	}
 
 }

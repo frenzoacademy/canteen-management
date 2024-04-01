@@ -27,19 +27,16 @@ public class CanteenManager {
 	private String password;
 	private long mob_number;
 
+	@Lob
+	@JsonIgnore
+	private Blob image; // Store the image as Blob
 
-    @Lob
-    @JsonIgnore
-    private Blob image; // Store the image as Blob
+	@Transient
+	private String imageBase64;
 
-    @Transient
-    private String imageBase64;
-	
-	
 	@JsonProperty("image")
-    private String photo;
-	
-	
+	private String photo;
+
 	public String getImageBase64() {
 		return imageBase64;
 	}
@@ -90,9 +87,6 @@ public class CanteenManager {
 		this.mob_number = mob_number2;
 
 	}
-
-
-	
 
 	public int getId() {
 		return id;

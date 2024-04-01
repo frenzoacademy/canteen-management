@@ -38,7 +38,7 @@ public class FoodInventoryService {
 				String jsonFoods = objectMapper.writeValueAsString(foods);
 				return foods;
 			} catch (JsonProcessingException e) {
-				e.printStackTrace(); 
+				e.printStackTrace();
 				throw new Exception("Error processing JSON");
 			}
 		} else {
