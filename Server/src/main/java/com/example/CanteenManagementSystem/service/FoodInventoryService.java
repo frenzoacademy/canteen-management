@@ -1,24 +1,24 @@
 package com.example.CanteenManagementSystem.service;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.sql.Blob;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import javax.sql.rowset.serial.SerialBlob;
-import javax.sql.rowset.serial.SerialException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ReflectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.CanteenManagementSystem.model.FoodInventory;
 import com.example.CanteenManagementSystem.model.NotFoundException;
+import com.example.CanteenManagementSystem.model.StudentForm;
 import com.example.CanteenManagementSystem.repository.FoodInventoryRepo;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 
 @Service
 public class FoodInventoryService {
@@ -113,15 +113,55 @@ public class FoodInventoryService {
 	  @Autowired
 	    private FoodInventoryRepo foodInventoryRepository;
 
-	    public List<FoodInventory> getAllFoods() {
+	   /* public List<FoodInventory> getAllFoods() {
 	        List<FoodInventory> foods = foodInventoryRepository.findAll();
 	        if (foods.size() > 0) {
 	            return foods;
 	        } else {
 	            throw new NotFoundException("No records found");
 	        }
-	    }
+	    }*/
+	  
+	  
+	  
+	 
+	  public List<FoodInventory> getAllFoods() throws Exception {
+	      List<FoodInventory> foods = foodInventoryRepository.findAll();
+	      if (foods.size() > 0) {
+	          // Configure ObjectMapper to use custom serializer
+	          ObjectMapper objectMapper = new ObjectMapper();
+	          SimpleModule module = new SimpleModule();
+	          module.addSerializer(Blob.class, new BlobSerializer());
+	          objectMapper.registerModule(module);
 
+	          // Convert FoodInventory objects to JSON with image data included
+	          try {
+	              String jsonFoods = objectMapper.writeValueAsString(foods);
+	              System.out.println(jsonFoods); // For debugging purposes
+	              return foods;
+	          } catch (JsonProcessingException e) {
+	              // Handle JSON serialization error
+	              e.printStackTrace(); // Handle or log the exception
+	              throw new Exception("Error processing JSON");
+	          }
+	      } else {
+	          throw new NotFoundException("No records found");
+	      }
+	  }
+	  
+	  public Blob getFoodPhotoByFoodId(int id) throws SQLException {
+		     Optional<FoodInventory> food = foodInventoryRepository.findById(id);
+		     if(food.isEmpty()){
+		         throw new NotFoundException("Sorry, Student not found!");
+		     }
+		     Blob photoBlob = food.get().getPhoto();
+		     if(photoBlob != null){
+		         return photoBlob;
+		     }
+		     return null;
+		 }
+
+	 
 	    public FoodInventory getFoodById(int id) {
 	        Optional<FoodInventory> food = foodInventoryRepository.findById(id);
 	        if (food.isPresent()) {
