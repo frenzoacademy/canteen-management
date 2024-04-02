@@ -3,7 +3,7 @@ import Image from "next/image";
 import PopOver from "./PopOver";
 import { useState } from "react";
 
-const FoodMenuCard = ({ image, name, amount }) => {
+const FoodMenuCard = ({ image, name, amount, id }) => {
   const [isPopOverOpen, setIsPopOverOpen] = useState(false);
 
   const openPopOver = () => {
@@ -15,8 +15,14 @@ const FoodMenuCard = ({ image, name, amount }) => {
   };
   return (
     <div className="max-w-xs rounded overflow-hidden shadow-lg">
-      <div className="flex justify-center items-center border">
-        <Image width={250} height={100} src={image} alt={"food"} />
+      <div className="flex justify-center items-center  w-[200px] h-[200px]">
+        <Image
+          width={250}
+          height={250}
+          src={`data:image/png;base64,${image}`}
+          className="object-cover object-center"
+          alt={"food"}
+        />
       </div>
       <div className="px-6 py-4">
         <div className="font-bold text-xl mb-2">{name}</div>
@@ -37,6 +43,7 @@ const FoodMenuCard = ({ image, name, amount }) => {
         isOpen={isPopOverOpen}
         closeModal={closePopOver}
         foodName={name}
+        food_id={id}
       />
     </div>
   );

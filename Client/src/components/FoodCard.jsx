@@ -3,14 +3,12 @@ import { useState } from "react";
 import Image from "next/image";
 
 const FoodCard = ({
-  id,
+  food_id,
   image,
   name,
   amount,
   addToCartHandler,
   disabled,
-  isPopOverOpen,
-  setIsPopOverOpen,
 }) => {
   const [quantity, setQuantity] = useState(1);
   const [showAddToCart, setShowAddToCart] = useState(true);
@@ -21,14 +19,14 @@ const FoodCard = ({
       const newTotalAmount = newQuantity * amount;
       setQuantity(newQuantity);
       addToCartHandler({
-        id,
+        food_id,
         quantity: newQuantity,
         totalAmount: parseInt(newTotalAmount),
       });
     } else {
       setShowAddToCart(true);
       addToCartHandler({
-        id,
+        food_id,
         quantity: 0,
         totalAmount: 0,
       });
@@ -40,29 +38,30 @@ const FoodCard = ({
     const newTotalAmount = newQuantity * amount;
     setQuantity(newQuantity);
     addToCartHandler({
-      id,
+      food_id,
       quantity: newQuantity,
       totalAmount: parseInt(newTotalAmount),
     });
   };
 
   const addToCart = () => {
-    if (isPopOverOpen) {
-      setShowAddToCart(false);
-      return addToCartHandler({
-        id,
-        quantity,
-        totalAmount: quantity * parseInt(amount),
-      });
-    } else {
-      setIsPopOverOpen(true);
-    }
+    setShowAddToCart(false);
+    return addToCartHandler({
+      food_id,
+      quantity,
+      totalAmount: quantity * parseInt(amount),
+    });
   };
 
   return (
     <div className="max-w-xs rounded overflow-hidden shadow-lg">
-      <div className="flex justify-center items-center border">
-        <Image width={250} height={100} src={image} alt={"food"} />
+      <div className="flex justify-center items-center border h-[200px] w-[200px]">
+        <Image
+          width={250}
+          height={250}
+          src={`data:image/png;base64,${image}`}
+          alt={"food"}
+        />
       </div>
       <div className="px-6 py-4">
         <div className="font-bold text-xl mb-2">{name}</div>
