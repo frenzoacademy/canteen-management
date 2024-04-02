@@ -2,13 +2,18 @@
 import {
   useAddFoodInventory,
   useEditFoodInventory,
+  useGetFoodInventory,
 } from "@/features/foodInventory/foodInventory.hooks";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
 const FoodInventoryForm = ({ editId }) => {
-  const { mutate: addInventory } = useAddFoodInventory();
-  const { mutate: updateInventory } = useEditFoodInventory();
+  const route = useRouter();
+  const { mutate: addInventory, isSuccess } = useAddFoodInventory();
+  const { mutate: updateInventory, isSuccess: editSuccess } =
+    useEditFoodInventory();
+  const { data } = useGetFoodInventory(editId);
   const [image, setImage] = useState([]);
 
   const {
@@ -27,16 +32,36 @@ const FoodInventoryForm = ({ editId }) => {
       lunch: false,
       eveningfood: false,
       dinner: false,
-      allTime: false,
+      alltime: false,
       amount: "",
     },
   });
+
+  if (isSuccess || editSuccess) {
+    route.push(`/inventory`);
+  }
+
+  useEffect(() => {
+    if (data && editId) {
+      setValue("name", data.name || "");
+      setValue("quantity", data.quantity || 0);
+      setValue("isAvailability", data.availability || false);
+      setValue("breakfast", data.breakfast || false);
+      setValue("lunch", data.lunch || false);
+      setValue("eveningfood", data.eveningfood || false);
+      setValue("dinner", data.dinner || false);
+      setValue("alltime", data.alltime || false);
+      setValue("file", data.photoBase64 || false);
+      setValue("amount", data.amount || "");
+    }
+  }, [data, editId]);
 
   useEffect(() => {
     setValue("file", image);
   }, [image, setValue]);
 
   const onSubmit = (data) => {
+    console.log({ data });
     try {
       const formData = new FormData();
 
@@ -204,7 +229,7 @@ const FoodInventoryForm = ({ editId }) => {
                 <input
                   type="checkbox"
                   className="h-5 w-5 accent-black"
-                  {...register("allTime")}
+                  {...register("alltime")}
                 />{" "}
                 <label
                   htmlFor="allTime"

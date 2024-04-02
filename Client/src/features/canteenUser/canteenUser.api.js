@@ -16,7 +16,9 @@ export const createCanteenUser = async (values) => {
 };
 
 export const updateCanteenUser = async ({ id, values }) => {
-  const { data } = await axios.put(`/canteenManager/${id}`, values);
+  const { data } = await axios.put(`/canteenManager/${id}`, values, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
   return data;
 };
 

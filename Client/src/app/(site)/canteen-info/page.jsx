@@ -1,49 +1,15 @@
 "use client";
 import PageHeader from "@/components/PageHeader";
+import {
+  useGetCanteenUsers,
+  useRemoveCanteenUser,
+} from "@/features/canteenUser/canteenUser.hooks";
 import Image from "next/image";
+import Link from "next/link";
 
 const Page = () => {
-  const canteen = [
-    {
-      firstName: "John",
-      lastName: "Doe",
-      aadharNumber: "1234 5678 9012",
-      address: "123 Main St, Cityville",
-      date: "1990-01-01",
-      department: "IT",
-      phoneNumber: "123-456-7890",
-      rfid: "RFID123",
-      email: "john.doe@example.com",
-      image:
-        "https://images.pexels.com/photos/2859616/pexels-photo-2859616.jpeg?auto=compress&cs=tinysrgb&w=600",
-    },
-    {
-      firstName: "Alice",
-      lastName: "Smith",
-      aadharNumber: "9876 5432 1098",
-      address: "456 Elm St, Townsville",
-      date: "1985-05-15",
-      department: "HR",
-      phoneNumber: "987-654-3210",
-      rfid: "RFID456",
-      email: "alice.smith@example.com",
-      image:
-        "https://images.pexels.com/photos/2681751/pexels-photo-2681751.jpeg?auto=compress&cs=tinysrgb&w=600",
-    },
-    {
-      firstName: "Michael",
-      lastName: "Johnson",
-      aadharNumber: "2468 1357 9021",
-      address: "789 Oak St, Villageton",
-      date: "1982-11-30",
-      department: "Finance",
-      phoneNumber: "555-123-4567",
-      rfid: "RFID789",
-      email: "michael.johnson@example.com",
-      image:
-        "https://images.pexels.com/photos/2887718/pexels-photo-2887718.jpeg?auto=compress&cs=tinysrgb&w=600",
-    },
-  ];
+  const { data } = useGetCanteenUsers();
+  const { mutate } = useRemoveCanteenUser();
 
   return (
     <div>
@@ -65,7 +31,7 @@ const Page = () => {
             </tr>
           </thead>
           <tbody>
-            {canteen.map((employee, index) => (
+            {data?.map((employee, index) => (
               <tr
                 key={index}
                 className={(index + 1) % 2 === 0 ? "bg-gray-100" : "bg-white"}
@@ -74,24 +40,30 @@ const Page = () => {
                   <Image
                     width={100}
                     height={100}
-                    src={employee.image}
-                    alt={`${employee.firstName} ${employee.lastName}`}
+                    src={`data:image/png;base64,${employee.imageBase64}`}
+                    alt={`${employee.first_Name} ${employee.last_Name}`}
                     className="w-12 h-12 object-cover rounded-full"
                   />
                   <h1 className="font-medium text-base">
-                    {employee.firstName} {employee.lastName}
+                    {employee.first_name} {employee.last_name}
                   </h1>
                 </td>
 
-                <td className=" px-4 py-2">{employee.phoneNumber}</td>
+                <td className=" px-4 py-2">{employee.mob_number}</td>
                 <td className=" px-4 py-2">{employee.email}</td>
                 <td className=" px-4 py-2 text-center">
-                  <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                  <Link
+                    href={`/canteen-info/edit/${employee.id}`}
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                  >
                     Edit
-                  </button>
+                  </Link>
                 </td>
                 <td className=" px-4 py-2 text-center">
-                  <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                  <button
+                    onClick={() => mutate(employee.id)}
+                    className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                  >
                     Delete
                   </button>
                 </td>
