@@ -55,7 +55,7 @@ public class PurchaseOrderService {
 
 	public PurchaseOrder updatePurchaseOrder(int id, PurchaseOrder updatedPurchaseOrder) {
 		return purchaseRepo.findById(id).map((PurchaseOrder purchaseOrder) -> {
-			updatedPurchaseOrder.setFood_id(purchaseOrder.getFood_id());
+			updatedPurchaseOrder.setFoodItems(purchaseOrder.getFoodItems());
 			return purchaseRepo.save(updatedPurchaseOrder);
 		}).orElseThrow(() -> new RuntimeException("Purchase Order with ID " + id + " not found"));
 	}

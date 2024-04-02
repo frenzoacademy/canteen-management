@@ -26,7 +26,8 @@ public class StudentForm {
 	private String email;
 	private LocalDate date_time;
 	private String password;
-
+	private int wallet;
+	
 	@Lob
 	@JsonIgnore
 	private Blob image;
@@ -34,13 +35,17 @@ public class StudentForm {
 	@JsonIgnore // Ignore imageData during serialization
 	private byte[] imageData;
 
-	@ManyToMany
-	@JoinTable(name = "studentform_purchaseorder", joinColumns = @JoinColumn(name = "student_id"), inverseJoinColumns = @JoinColumn(name = "food_id"))
-	private List<PurchaseOrder> purchaseOrders;
+	@OneToMany(mappedBy = "studentForm")
+    private List<PurchaseOrder> purchaseOrders;
+
+	
+//	@ManyToMany
+//	@JoinTable(name = "studentform_purchaseorder", joinColumns = @JoinColumn(name = "student_id"), inverseJoinColumns = @JoinColumn(name = "food_id"))
+//	private List<PurchaseOrder> purchaseOrders;
 
 	public StudentForm(int student_id, long rfid_Number, String first_name, String last_name, String department,
 			String aadhar_number, long mob_number, String address, String email, LocalDate date_time, String password,
-			Blob image, byte[] imageData, List<PurchaseOrder> purchaseOrders) {
+			Blob image, byte[] imageData, List<PurchaseOrder> purchaseOrders,int wallet) {
 		super();
 		this.student_id = student_id;
 		this.rfid_Number = rfid_Number;
@@ -56,15 +61,23 @@ public class StudentForm {
 		this.image = image;
 		this.imageData = imageData;
 		this.purchaseOrders = purchaseOrders;
+		this.wallet=wallet;
 	}
 
 	public StudentForm() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public int getStudent_id() {
 		return student_id;
+	}
+
+	public int getWallet() {
+		return wallet;
+	}
+
+	public void setWallet(int wallet) {
+		this.wallet = wallet;
 	}
 
 	public void setStudent_id(int student_id) {

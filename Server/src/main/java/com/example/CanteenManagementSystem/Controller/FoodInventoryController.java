@@ -117,7 +117,7 @@ public class FoodInventoryController {
 		return ResponseEntity.ok("Food with ID " + id + " has been deleted.");
 	}
 
-	@PutMapping("/{id}")
+	/*@PutMapping("/{id}")
 	public ResponseEntity<?> updateFood(@PathVariable int id,
 			@RequestParam(value = "file", required = false) MultipartFile file, @RequestParam("name") String name,
 			@RequestParam("amount") int amount, @RequestParam("isAvailability") boolean isAvailability,
@@ -157,6 +157,69 @@ public class FoodInventoryController {
 			e.printStackTrace();
 			return ResponseEntity.badRequest().body("File parameter is null.");
 		}
+	}*/
+	@PutMapping("/{id}")
+	public ResponseEntity<?> updateFood(@PathVariable int id,
+	                                    @RequestParam(value = "file", required = false) MultipartFile file,
+	                                    @RequestParam(value = "name", required = false) String name,
+	                                    @RequestParam(value = "amount", required = false) Integer amount,
+	                                    @RequestParam(value = "isAvailability", required = false) Boolean isAvailability,
+	                                    @RequestParam(value = "breakfast", required = false) Boolean breakfast,
+	                                    @RequestParam(value = "lunch", required = false) Boolean lunch,
+	                                    @RequestParam(value = "eveningfood", required = false) Boolean eveningfood,
+	                                    @RequestParam(value = "dinner", required = false) Boolean dinner,
+	                                    @RequestParam(value = "alltime", required = false) Boolean alltime,
+	                                    @RequestParam(value = "quantity", required = false) Integer quantity) throws SerialException {
+	    try {
+	        Optional<FoodInventory> optionalFood = Optional.ofNullable(foodInventoryService.getFoodById(id));
+	        if (optionalFood.isPresent()) {
+	            FoodInventory food = optionalFood.get();
+	            if (file != null && !file.isEmpty()) {
+	                Blob photoBlob = new SerialBlob(file.getBytes());
+	                food.setPhoto(photoBlob);
+	                String base64Image = Base64.encodeBase64String(photoBlob.getBytes(1, (int) photoBlob.length()));
+	                food.setPhotoBase64(base64Image);
+	            }
+	            if (name != null) {
+	                food.setName(name);
+	            }
+	            if (amount != null) {
+	                food.setAmount(amount);
+	            }
+	            if (isAvailability != null) {
+	                food.setAvailability(isAvailability);
+	            }
+	            if (breakfast != null) {
+	                food.setBreakfast(breakfast);
+	            }
+	            if (lunch != null) {
+	                food.setLunch(lunch);
+	            }
+	            if (eveningfood != null) {
+	                food.setEveningfood(eveningfood);
+	            }
+	            if (dinner != null) {
+	                food.setDinner(dinner);
+	            }
+	            if (alltime != null) {
+	                food.setAlltime(alltime);
+	            }
+	            if (quantity != null) {
+	                food.setQuantity(quantity);
+	            }
+	            foodInventoryService.updateFood(food, file);
+	            return ResponseEntity.ok(food);
+	        } else {
+	            return ResponseEntity.notFound().build();
+	        }
+	    } catch (IOException | SQLException e) {
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	    } catch (NullPointerException e) {
+	        e.printStackTrace();
+	        return ResponseEntity.badRequest().body("File parameter is null.");
+	    }
 	}
+
 
 }

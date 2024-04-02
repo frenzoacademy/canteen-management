@@ -2,6 +2,7 @@ package com.example.CanteenManagementSystem.Controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.CanteenManagementSystem.model.PurchaseOrder;
+import com.example.CanteenManagementSystem.model.StudentForm;
+import com.example.CanteenManagementSystem.repository.StudentFormRepo;
 import com.example.CanteenManagementSystem.service.PurchaseOrderService;
 
 @ControllerAdvice
@@ -34,21 +37,35 @@ public class PurchaseOrderController {
 		return new ResponseEntity<List<PurchaseOrder>>(purchaseorder, HttpStatus.OK);
 	}
 
-	/*@PostMapping
-	public ResponseEntity<PurchaseOrder> addDetails(@RequestBody PurchaseOrder order) {
-		PurchaseOrder p = purchaseService.addOrder(order);
-		return new ResponseEntity<PurchaseOrder>(p, HttpStatus.CREATED);
-	}*/
+	@Autowired
+	StudentFormRepo studentRepo;
+
 	@PostMapping
-	public ResponseEntity<List<PurchaseOrder>> addBulkOrders(@RequestBody List<PurchaseOrder> orders) {
+	public ResponseEntity<?> addBulkOrders(@RequestBody List<PurchaseOrder> orders) {
 	    List<PurchaseOrder> addedOrders = new ArrayList<>();
+
 	    for (PurchaseOrder order : orders) {
-	        PurchaseOrder addedOrder = purchaseService.addOrder(order);
-	        addedOrders.add(addedOrder);
+	        Optional<StudentForm> optionalStudent = studentRepo.findById(order.getStudentForm().getStudent_id());
+	        
+	        if (optionalStudent.isPresent()) {
+	            StudentForm student = optionalStudent.get();
+	            
+	            int updatedWalletBalance = student.getWallet() - order.getTotalAmount();
+	            if (updatedWalletBalance >= 0) {
+	                student.setWallet(updatedWalletBalance);
+	                studentRepo.save(student);
+	                PurchaseOrder addedOrder = purchaseService.addOrder(order);
+	                addedOrders.add(addedOrder);
+	            } else {
+	                return ResponseEntity.badRequest().body("Insufficient balance for student ID: " + student.getStudent_id());
+	            }
+	        } else {
+	            return ResponseEntity.badRequest().body("Student ID not found: " + order.getStudentForm().getStudent_id());
+	        }
 	    }
+
 	    return new ResponseEntity<>(addedOrders, HttpStatus.CREATED);
 	}
-
 
 	@PutMapping("/{id}")
 	public ResponseEntity<PurchaseOrder> updatePurchaseOrder(@PathVariable int id,

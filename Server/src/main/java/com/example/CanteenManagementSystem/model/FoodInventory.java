@@ -35,6 +35,10 @@ public class FoodInventory {
 	@Transient // Indicates that this field should not be persisted in the database
 	private String photoBase64; // Base64 encoded image data
 
+	@ManyToMany(mappedBy = "foodItems")
+    private List<PurchaseOrder> purchaseOrders;
+
+	
 	public String getPhotoBase64() {
 		return photoBase64;
 	}
@@ -170,6 +174,30 @@ public class FoodInventory {
 
 	public void setPhoto(Blob photo) {
 		this.photo = photo;
+	}
+
+	public String getImage() {
+		return image;
+	}
+
+	public void setImage(String image) {
+		this.image = image;
+	}
+
+	public List<PurchaseOrder> getPurchaseOrders() {
+		return purchaseOrders;
+	}
+
+	public void setPurchaseOrders(List<PurchaseOrder> purchaseOrders) {
+		this.purchaseOrders = purchaseOrders;
+	}
+
+	public CanteenManager getCanteenManager() {
+		return canteenManager;
+	}
+
+	public void setCanteenManager(CanteenManager canteenManager) {
+		this.canteenManager = canteenManager;
 	}
 
 }
