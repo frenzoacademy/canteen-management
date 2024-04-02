@@ -36,6 +36,7 @@ public class FoodInventory {
 	private String photoBase64; // Base64 encoded image data
 
 	@ManyToMany(mappedBy = "foodItems")
+    @JsonIgnore
     private List<PurchaseOrder> purchaseOrders;
 
 	

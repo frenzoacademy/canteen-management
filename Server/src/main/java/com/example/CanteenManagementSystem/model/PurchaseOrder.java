@@ -127,6 +127,8 @@ import jakarta.persistence.*;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 public class PurchaseOrder {
 
@@ -139,7 +141,7 @@ public class PurchaseOrder {
     private String status;
 
     @ManyToOne
-    @JoinColumn(name = "student_id") // Assuming the foreign key column name
+    @JoinColumn(name = "student_id") 
     private StudentForm studentForm;
 
     @ManyToMany
@@ -148,7 +150,18 @@ public class PurchaseOrder {
                inverseJoinColumns = @JoinColumn(name = "food_id"))
     private List<FoodInventory> foodItems;
 
-    public PurchaseOrder(int order_id, float quantity, int totalAmount, Date date_time, String status, List<FoodInventory> foodItems) {
+    
+    
+    @JsonIgnore
+    public StudentForm getStudentForm() {
+        return studentForm;
+    }
+    
+    public PurchaseOrder() {
+		super();
+	}
+
+	public PurchaseOrder(int order_id, float quantity, int totalAmount, Date date_time, String status, List<FoodInventory> foodItems) {
         this.order_id = order_id;
         this.quantity = quantity;
         this.totalAmount = totalAmount;
@@ -197,9 +210,9 @@ public class PurchaseOrder {
         this.status = status;
     }
 
-    public StudentForm getStudentForm() {
-        return studentForm;
-    }
+//    public StudentForm getStudentForm() {
+//        return studentForm;
+//    }
 
     public void setStudentForm(StudentForm studentForm) {
         this.studentForm = studentForm;

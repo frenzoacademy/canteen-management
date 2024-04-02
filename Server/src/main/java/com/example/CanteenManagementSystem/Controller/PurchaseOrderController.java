@@ -18,9 +18,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.CanteenManagementSystem.model.FoodInventory;
 import com.example.CanteenManagementSystem.model.PurchaseOrder;
 import com.example.CanteenManagementSystem.model.StudentForm;
 import com.example.CanteenManagementSystem.repository.StudentFormRepo;
+import com.example.CanteenManagementSystem.service.FoodInventoryService;
 import com.example.CanteenManagementSystem.service.PurchaseOrderService;
 
 @ControllerAdvice
@@ -40,7 +42,7 @@ public class PurchaseOrderController {
 	@Autowired
 	StudentFormRepo studentRepo;
 
-	@PostMapping
+	/*@PostMapping
 	public ResponseEntity<?> addBulkOrders(@RequestBody List<PurchaseOrder> orders) {
 	    List<PurchaseOrder> addedOrders = new ArrayList<>();
 
@@ -65,7 +67,57 @@ public class PurchaseOrderController {
 	    }
 
 	    return new ResponseEntity<>(addedOrders, HttpStatus.CREATED);
+	}*/
+	
+	@Autowired
+	FoodInventoryService foodInventoryService;
+	
+	
+	@PostMapping
+	public ResponseEntity<?> addBulkOrders(@RequestBody List<PurchaseOrder> orders) {
+	    List<PurchaseOrder> addedOrders = new ArrayList<>();
+
+	    for (PurchaseOrder order : orders) {
+	        Optional<StudentForm> optionalStudent = studentRepo.findById(order.getStudentForm().getStudent_id());
+	        
+	        if (optionalStudent.isPresent()) {
+	            StudentForm student = optionalStudent.get();
+	            
+	            int updatedWalletBalance = student.getWallet() - order.getTotalAmount();
+	            if (updatedWalletBalance >= 0) {
+	                student.setWallet(updatedWalletBalance);
+	                studentRepo.save(student);
+
+	                // Iterate over food items in the order and update food inventory
+	                for (FoodInventory item : order.getFoodItems()) {
+	                    Optional<FoodInventory> optionalFood = Optional.ofNullable(foodInventoryService.getFoodById(item.getFood_id()));
+	                    if (optionalFood.isPresent()) {
+	                        FoodInventory food = optionalFood.get();
+	                        int remainingQuantity = food.getQuantity() - item.getQuantity();
+	                        if (remainingQuantity >= 0) {
+	                            food.setQuantity(remainingQuantity);
+	                            foodInventoryService.updateFood(food, null); // Assuming file is not relevant here
+	                        } else {
+	                            return ResponseEntity.badRequest().body("Insufficient quantity for food ID: " + food.getFood_id());
+	                        }
+	                    } else {
+	                        return ResponseEntity.badRequest().body("Food ID not found: " + item.getFood_id());
+	                    }
+	                }
+
+	                PurchaseOrder addedOrder = purchaseService.addOrder(order);
+	                addedOrders.add(addedOrder);
+	            } else {
+	                return ResponseEntity.badRequest().body("Insufficient balance for student ID: " + student.getStudent_id());
+	            }
+	        } else {
+	            return ResponseEntity.badRequest().body("Student ID not found: " + order.getStudentForm().getStudent_id());
+	        }
+	    }
+
+	    return new ResponseEntity<>(addedOrders, HttpStatus.CREATED);
 	}
+
 
 	@PutMapping("/{id}")
 	public ResponseEntity<PurchaseOrder> updatePurchaseOrder(@PathVariable int id,

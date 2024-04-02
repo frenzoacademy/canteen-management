@@ -42,6 +42,9 @@ public class StudentFormResponse {
 	@JsonProperty("password")
 	private String password;
 
+	@JsonProperty("wallet")
+	private String wallet;
+	
 	public StudentFormResponse() {
 		super();
 	}

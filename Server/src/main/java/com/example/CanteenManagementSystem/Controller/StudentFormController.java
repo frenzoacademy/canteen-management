@@ -91,10 +91,11 @@ public class StudentFormController {
 			@RequestParam("address") String address,
 			@RequestParam("password") String password,
 			@RequestParam("email") String email,
+			@RequestParam("wallet") int wallet,
 			@RequestParam("date_time") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date_time)
 			throws IOException, SQLException {
 		StudentForm s = studentService.addStudent(file, rfid_Number, First_name, Last_name, department, aadhar_number,
-				mob_number, address,password, email, date_time);
+				mob_number, address,password, email, date_time,wallet);
 		return new ResponseEntity<StudentForm>(s, HttpStatus.CREATED);
 	}
 

@@ -36,6 +36,7 @@ public class StudentForm {
 	private byte[] imageData;
 
 	@OneToMany(mappedBy = "studentForm")
+    @JsonIgnore
     private List<PurchaseOrder> purchaseOrders;
 
 	

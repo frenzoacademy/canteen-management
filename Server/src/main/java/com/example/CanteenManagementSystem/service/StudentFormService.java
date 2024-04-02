@@ -57,7 +57,7 @@ public class StudentFormService {
 
 	public StudentForm addStudent(MultipartFile file, long rfid_Number, String first_name, String last_name,
 			String department, String aadhar_number, long mob_number, String address, String password, String email,
-			LocalDate date_time) throws IOException, SQLException {
+			LocalDate date_time,int wallet) throws IOException, SQLException {
 		StudentForm s = new StudentForm();
 		s.setRfid_Number(rfid_Number);
 		s.setFirst_name(first_name);
@@ -69,7 +69,7 @@ public class StudentFormService {
 		s.setMob_number(mob_number);
 		s.setEmail(email);
 		s.setDate_time(date_time);
-
+		s.setWallet(wallet);
 		if (!file.isEmpty()) {
 			byte[] photoBytes = file.getBytes();
 			Blob photoBlob = new SerialBlob(photoBytes);
@@ -137,4 +137,6 @@ public class StudentFormService {
 
 		}
 	}
+
+	
 }

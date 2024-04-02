@@ -30,6 +30,7 @@ import com.example.CanteenManagementSystem.model.FoodInventory;
 import com.example.CanteenManagementSystem.model.NotFoundException;
 import com.example.CanteenManagementSystem.model.StudentForm;
 import com.example.CanteenManagementSystem.model.StudentFormResponse;
+import com.example.CanteenManagementSystem.repository.FoodInventoryRepo;
 import com.example.CanteenManagementSystem.service.FoodInventoryService;
 
 @ControllerAdvice
@@ -158,9 +159,14 @@ public class FoodInventoryController {
 			return ResponseEntity.badRequest().body("File parameter is null.");
 		}
 	}*/
+	
+	
+	@Autowired
+	FoodInventoryRepo foodInventoryRepo;
+	
 	@PutMapping("/{id}")
 	public ResponseEntity<?> updateFood(@PathVariable int id,
-	                                    @RequestParam(value = "file", required = false) MultipartFile file,
+//	                                    @RequestParam(value = "file", required = false) MultipartFile file,
 	                                    @RequestParam(value = "name", required = false) String name,
 	                                    @RequestParam(value = "amount", required = false) Integer amount,
 	                                    @RequestParam(value = "isAvailability", required = false) Boolean isAvailability,
@@ -174,12 +180,15 @@ public class FoodInventoryController {
 	        Optional<FoodInventory> optionalFood = Optional.ofNullable(foodInventoryService.getFoodById(id));
 	        if (optionalFood.isPresent()) {
 	            FoodInventory food = optionalFood.get();
-	            if (file != null && !file.isEmpty()) {
-	                Blob photoBlob = new SerialBlob(file.getBytes());
-	                food.setPhoto(photoBlob);
-	                String base64Image = Base64.encodeBase64String(photoBlob.getBytes(1, (int) photoBlob.length()));
-	                food.setPhotoBase64(base64Image);
-	            }
+
+//	            if (file != null && !file.isEmpty()) { // Check if file is not null before accessing its properties
+//	                Blob photoBlob = new SerialBlob(file.getBytes());
+//	                food.setPhoto(photoBlob);
+//	                String base64Image = Base64.encodeBase64String(photoBlob.getBytes(1, (int) photoBlob.length()));
+//	                food.setPhotoBase64(base64Image);
+//	            }
+
+	            // Update other fields without checking if they are null
 	            if (name != null) {
 	                food.setName(name);
 	            }
@@ -207,17 +216,15 @@ public class FoodInventoryController {
 	            if (quantity != null) {
 	                food.setQuantity(quantity);
 	            }
-	            foodInventoryService.updateFood(food, file);
+
+	            foodInventoryRepo.save(food);
 	            return ResponseEntity.ok(food);
 	        } else {
 	            return ResponseEntity.notFound().build();
 	        }
-	    } catch (IOException | SQLException e) {
-	        e.printStackTrace();
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 	    } catch (NullPointerException e) {
 	        e.printStackTrace();
-	        return ResponseEntity.badRequest().body("File parameter is null.");
+	        return ResponseEntity.badRequest().body("Error occurred while processing the request.");
 	    }
 	}
 
