@@ -166,7 +166,7 @@ public class FoodInventoryController {
 	
 	@PutMapping("/{id}")
 	public ResponseEntity<?> updateFood(@PathVariable int id,
-//	                                    @RequestParam(value = "file", required = false) MultipartFile file,
+	                                    @RequestParam(value = "file", required = false) MultipartFile file,
 	                                    @RequestParam(value = "name", required = false) String name,
 	                                    @RequestParam(value = "amount", required = false) Integer amount,
 	                                    @RequestParam(value = "isAvailability", required = false) Boolean isAvailability,
@@ -175,20 +175,19 @@ public class FoodInventoryController {
 	                                    @RequestParam(value = "eveningfood", required = false) Boolean eveningfood,
 	                                    @RequestParam(value = "dinner", required = false) Boolean dinner,
 	                                    @RequestParam(value = "alltime", required = false) Boolean alltime,
-	                                    @RequestParam(value = "quantity", required = false) Integer quantity) throws SerialException {
+	                                    @RequestParam(value = "quantity", required = false) Integer quantity) throws SQLException, IOException {
 	    try {
 	        Optional<FoodInventory> optionalFood = Optional.ofNullable(foodInventoryService.getFoodById(id));
 	        if (optionalFood.isPresent()) {
 	            FoodInventory food = optionalFood.get();
 
-//	            if (file != null && !file.isEmpty()) { // Check if file is not null before accessing its properties
-//	                Blob photoBlob = new SerialBlob(file.getBytes());
-//	                food.setPhoto(photoBlob);
-//	                String base64Image = Base64.encodeBase64String(photoBlob.getBytes(1, (int) photoBlob.length()));
-//	                food.setPhotoBase64(base64Image);
-//	            }
+	            if (file != null && !file.isEmpty()) { // Check if file is not null before accessing its properties
+	                Blob photoBlob = new SerialBlob(file.getBytes());
+	                food.setPhoto(photoBlob);
+	                String base64Image = Base64.encodeBase64String(photoBlob.getBytes(1, (int) photoBlob.length()));
+	                food.setPhotoBase64(base64Image);
+	            }
 
-	            // Update other fields without checking if they are null
 	            if (name != null) {
 	                food.setName(name);
 	            }

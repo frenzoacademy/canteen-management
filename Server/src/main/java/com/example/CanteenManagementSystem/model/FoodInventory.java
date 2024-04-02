@@ -32,8 +32,8 @@ public class FoodInventory {
 	@JsonProperty("image")
 	private String image;
 
-	@Transient // Indicates that this field should not be persisted in the database
-	private String photoBase64; // Base64 encoded image data
+	@Transient 
+	private String photoBase64; 
 
 	@ManyToMany(mappedBy = "foodItems")
     @JsonIgnore
