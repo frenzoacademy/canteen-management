@@ -4,13 +4,15 @@ import {
   useEditStudent,
   useGetStudent,
 } from "@/features/students/students.hooks";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import useScanDetection from "use-scan-detection-react18";
 
 const StudentInfoForm = ({ editId }) => {
-  const { mutate: addStudent } = useAddStudent();
-  const { mutate: updateStudent } = useEditStudent();
+  const route = useRouter();
+  const { mutate: addStudent, isSuccess: addSuccess } = useAddStudent();
+  const { mutate: updateStudent, isSuccess: editSuccess } = useEditStudent();
   const { data } = useGetStudent(editId);
   const [image, setImage] = useState([]);
 
@@ -33,9 +35,14 @@ const StudentInfoForm = ({ editId }) => {
       rfid_Number: "",
       email: "",
       file: "",
+      wallet: 0,
+      password: "",
     },
   });
-  const passwordValue = watch("password");
+
+  if (addSuccess || editSuccess) {
+    route.push(`/students`);
+  }
 
   useEffect(() => {
     if (data && editId) {
@@ -48,17 +55,19 @@ const StudentInfoForm = ({ editId }) => {
       setValue("mob_number", data.mob_number || "");
       setValue("rfid_Number", data.rfid_Number || "");
       setValue("email", data.email || "");
-      setValue("file", data.file || "");
+      setValue("wallet", data.wallet || 0);
     }
   }, [data, editId]);
 
   useEffect(() => {
-    setValue("file", image);
+    if (!editId) {
+      setValue("file", image);
+    }
   }, [image]);
 
   useScanDetection({
     onComplete: (code) => {
-      watch("rfid_Number", code);
+      setValue("rfid_Number", code);
     },
   });
 
@@ -189,19 +198,21 @@ const StudentInfoForm = ({ editId }) => {
               {errors?.department?.message}
             </h1>
           </div>
-          <div>
-            <label
-              htmlFor="Image"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              Image{" "}
-            </label>
-            <input
-              type="file"
-              onChange={(e) => setImage(e.target.files[0])}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            />
-          </div>
+          {!editId && (
+            <div>
+              <label
+                htmlFor="Image"
+                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              >
+                Image{" "}
+              </label>
+              <input
+                type="file"
+                onChange={(e) => setImage(e.target.files[0])}
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              />
+            </div>
+          )}
           <div>
             <label
               htmlFor="email"
@@ -306,23 +317,19 @@ const StudentInfoForm = ({ editId }) => {
           </div>
           <div>
             <label
-              htmlFor="confirmPassword"
+              htmlFor="phoneNumber"
               className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
             >
-              Confirm Password
+              Wallet
             </label>
             <input
-              type="password"
+              type="number"
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="Confirm password"
-              {...register("confirmPassword", {
-                required: "This field is required",
-                validate: (value) =>
-                  value === passwordValue || "The passwords do not match",
-              })}
+              placeholder="0"
+              {...register("wallet")}
             />
             <h1 className="mt-1 text-sm text-red-600 font-medium">
-              {errors?.confirmPassword?.message}
+              {errors?.wallet?.message}
             </h1>
           </div>
         </div>

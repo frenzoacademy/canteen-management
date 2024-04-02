@@ -17,10 +17,13 @@ const Page = () => {
   };
 
   const addToCartHandler = (item) => {
+    console.log({ item });
     const itemAmount = parseInt(item.totalAmount);
     const itemQuantity = parseInt(item.quantity);
 
-    const existingCartItem = cart.find((cartItem) => cartItem.id === item.id);
+    const existingCartItem = cart.find(
+      (cartItem) => cartItem.food_id === item.food_id
+    );
     const existingQuantity = existingCartItem ? existingCartItem.quantity : 0;
     const existingAmount = existingCartItem ? existingCartItem.totalAmount : 0;
 
@@ -36,7 +39,7 @@ const Page = () => {
 
     if (newWalletAmount >= 0) {
       const existingItemIndex = cart.findIndex(
-        (cartItem) => cartItem.id === item.id
+        (cartItem) => cartItem.food_id === item.food_id
       );
 
       if (existingItemIndex !== -1) {
@@ -53,8 +56,11 @@ const Page = () => {
         if (item.quantity > 0) {
           const newItem = {
             ...item,
-            student_id: 1,
+            studentForm: {
+              student_id: 1,
+            },
             status: "success",
+            date: new Date(),
           };
           setCart([...cart, newItem]);
         }

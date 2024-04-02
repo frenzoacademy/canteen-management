@@ -1,8 +1,10 @@
+import { axios } from "@/app/libs/axios";
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   session: { strategy: "jwt" },
+  jwt: { encryption: true },
   pages: {
     signIn: "/login",
   },
@@ -12,21 +14,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       id: "credentials",
       credentials: {},
       async authorize(credentials) {
-        if (credentials.label === "rfid") {
-          if (credentials.rfid) {
-            // write code to find the user by rfid
-          }
-        } else if (credentials.label === "login") {
-          if (!credentials?.email || credentials.password) {
-            //   write a fetch the data using email and password
-          }
+        try {
+          const authResponse = await axios.post("/login", credentials);
+          return authResponse?.data?.data;
+        } catch (ex) {
           return null;
         }
-        // todo - check the user id
-        return {
-          ...user,
-          id: user.id ?? "",
-        };
       },
     }),
   ],
