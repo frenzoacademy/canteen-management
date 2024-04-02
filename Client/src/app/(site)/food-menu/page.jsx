@@ -1,4 +1,6 @@
+"use client";
 import FoodMenuCard from "@/components/FoodMenuCard";
+import { useGetFoodInventories } from "@/features/foodInventory/foodInventory.hooks";
 
 const foods = [
   {
@@ -36,7 +38,9 @@ const foods = [
   },
 ];
 
-const page = () => {
+const Page = () => {
+  const { data } = useGetFoodInventories();
+  console.log(data);
   // const { user } = await auth();
   // const {
   //   data: { user },
@@ -46,15 +50,15 @@ const page = () => {
       <div>
         <h2 className="text-lg font-medium my-5">{mealType}</h2>
         <div className="flex gap-5 flex-wrap">
-          {foods
-            .filter((food) => food[mealType.toLowerCase()])
-            .map((food, index) => (
+          {data
+            ?.filter((food) => food[mealType.toLowerCase()])
+            ?.map((food, index) => (
               <FoodMenuCard
                 key={index}
-                id={food.id}
-                name={food.food_name}
+                id={food.food_id}
+                name={food.name}
                 amount={food.amount}
-                image={food.image_url}
+                image={food.photoBase64}
               />
             ))}
         </div>
@@ -65,11 +69,11 @@ const page = () => {
   return (
     <div>
       {renderMealSection("Breakfast")}
-      {renderMealSection("Afternoon")}
-      {renderMealSection("Snacks")}
+      {renderMealSection("Lunch")}
+      {renderMealSection("Eveningfood")}
       {renderMealSection("Dinner")}
     </div>
   );
 };
 
-export default page;
+export default Page;

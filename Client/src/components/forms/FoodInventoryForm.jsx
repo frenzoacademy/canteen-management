@@ -20,6 +20,7 @@ const FoodInventoryForm = ({ editId }) => {
     register,
     handleSubmit,
     setValue,
+    watch,
     reset,
     formState: { errors },
   } = useForm({
@@ -36,7 +37,7 @@ const FoodInventoryForm = ({ editId }) => {
       amount: "",
     },
   });
-
+  console.log(watch());
   if (isSuccess || editSuccess) {
     route.push(`/inventory`);
   }
@@ -51,7 +52,7 @@ const FoodInventoryForm = ({ editId }) => {
       setValue("eveningfood", data.eveningfood || false);
       setValue("dinner", data.dinner || false);
       setValue("alltime", data.alltime || false);
-      setValue("file", data.photoBase64 || false);
+      setValue("file", data.photoBase64 || "");
       setValue("amount", data.amount || "");
     }
   }, [data, editId]);

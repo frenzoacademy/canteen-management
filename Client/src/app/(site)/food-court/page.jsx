@@ -1,56 +1,19 @@
 "use client";
 import FoodCard from "@/components/FoodCard";
-import RfidScanner from "@/components/RfidScanner";
+import { useGetFoodInventories } from "@/features/foodInventory/foodInventory.hooks";
+import { useAddPurchaseOrder } from "@/features/purchase-order/purchaseOrder.hooks";
 import { ArrowRightIcon } from "@heroicons/react/24/outline";
-import { useEffect, useState } from "react";
-
-const foods = [
-  {
-    id: 1,
-    food_name: "Food 1",
-    amount: "100",
-    image_url:
-      "https://images.pexels.com/photos/14775031/pexels-photo-14775031.jpeg?auto=compress&cs=tinysrgb&w=600",
-  },
-  {
-    id: 2,
-    food_name: "Food 2",
-    amount: "150",
-    image_url:
-      "https://images.pexels.com/photos/14774996/pexels-photo-14774996.jpeg?auto=compress&cs=tinysrgb&w=600",
-  },
-  {
-    id: 3,
-    food_name: "Food 3",
-    amount: "200",
-    image_url:
-      "https://images.pexels.com/photos/14774990/pexels-photo-14774990.jpeg?auto=compress&cs=tinysrgb&w=600",
-  },
-];
+import { useState } from "react";
 
 const Page = () => {
   const [cart, setCart] = useState([]);
+  console.log(cart);
   const [walletAmount, setWalletAmount] = useState(800);
-  const [rfidNumber, setRfidNumber] = useState(null);
-  const [message, setMessage] = useState("");
-  const [isPopOverOpen, setIsPopOverOpen] = useState(true);
+  const { data } = useGetFoodInventories();
+  const { mutate } = useAddPurchaseOrder();
 
-  const getRfid = (id) => {
-    setRfidNumber(id);
-  };
-
-  useEffect(() => {
-    if (rfidNumber === "2060149593") {
-      setIsPopOverOpen(false);
-    }
-  }, [rfidNumber]);
-
-  const openPopOver = () => {
-    setIsPopOverOpen(true);
-  };
-
-  const closePopOver = () => {
-    setIsPopOverOpen(false);
+  const handlePurchase = () => {
+    mutate(cart);
   };
 
   const addToCartHandler = (item) => {
@@ -88,7 +51,12 @@ const Page = () => {
         setCart(updatedCart);
       } else {
         if (item.quantity > 0) {
-          setCart([...cart, item]);
+          const newItem = {
+            ...item,
+            student_id: 1,
+            status: "success",
+          };
+          setCart([...cart, newItem]);
         }
       }
 
@@ -97,7 +65,9 @@ const Page = () => {
   };
   return (
     <div>
-      <h1 className="text-2xl font-medium mb-5">Order Food</h1>
+      <div className="px-3 py-2 bg-red-200 mb-5 text-red-600 border-red-500 border rounded-md">
+        <h1 className="font-normal text-sm ">Scan your RFID card to order</h1>
+      </div>
       <div className="bg-black py-4 px-5 rounded-md text-white flex justify-between items-center">
         <div>
           <h1 className="font-medium text-lg">Your</h1>
@@ -108,26 +78,27 @@ const Page = () => {
         <h1 className="font-black text-2xl">$ {walletAmount}</h1>
       </div>
       <div className="flex gap-5 flex-wrap mt-10">
-        {foods?.map((food, index) => (
+        {data?.map((food, index) => (
           <FoodCard
             key={index}
-            id={food?.id}
-            name={food?.food_name}
+            food_id={food?.food_id}
+            name={food?.name}
             amount={food?.amount}
-            image={food?.image_url}
+            image={food?.photoBase64}
             addToCartHandler={addToCartHandler}
-            isPopOverOpen={isPopOverOpen}
-            setIsPopOverOpen={setIsPopOverOpen}
             disabled={food?.amount > walletAmount}
           />
         ))}
       </div>
-      <RfidScanner
-        isOpen={isPopOverOpen}
-        closeModal={closePopOver}
-        getRfid={getRfid}
-        isRfid={rfidNumber}
-      />
+      <div className="  fixed bottom-0 right-0 p-10">
+        <button
+          type="submit"
+          onClick={handlePurchase}
+          className="px-4 py-2 bg-green-600 text-white rounded-lg mt-3"
+        >
+          Purchase
+        </button>
+      </div>
     </div>
   );
 };

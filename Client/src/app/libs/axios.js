@@ -1,18 +1,18 @@
-import Axios from 'axios';
-import { getSession } from 'next-auth/react';
+import Axios from "axios";
+import { getSession } from "next-auth/react";
 
-const authRequestInterceptor = async config => {
-  const session = await getSession();
-  if (session) {
-    config.headers.set('Authorization', session.accessToken.email);
-  }
+// const authRequestInterceptor = async config => {
+//   const session = await getSession();
+//   if (session) {
+//     config.headers.set('Authorization', session.accessToken.email);
+//   }
 
-  config.headers.Accept = 'application/json';
-  return config;
-};
+//   config.headers.Accept = 'application/json';
+//   return config;
+// };
 
 export const axios = Axios.create({
-  baseURL: process.env.NEXT_PUBLIC_APIURL
+  baseURL: process.env.NEXT_PUBLIC_APIURL,
 });
 
-axios.interceptors.request.use(authRequestInterceptor);
+// axios.interceptors.request.use(authRequestInterceptor);

@@ -1,8 +1,17 @@
 "use client";
+import { useEditFoodInventory } from "@/features/foodInventory/foodInventory.hooks";
 import { Dialog, Transition } from "@headlessui/react";
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 
-const PopOver = ({ isOpen, closeModal, foodName }) => {
+const PopOver = ({ isOpen, closeModal, foodName, food_id }) => {
+  const [quantity, setQuantity] = useState(0);
+  const { mutate } = useEditFoodInventory();
+  const handleUpdate = () => {
+    mutate({
+      id: food_id,
+      values: { quantity },
+    });
+  };
   return (
     <>
       <Transition appear show={isOpen || false} as={Fragment}>
@@ -41,6 +50,7 @@ const PopOver = ({ isOpen, closeModal, foodName }) => {
                     <input
                       type="number"
                       placeholder="Quantity"
+                      onChange={(e) => setQuantity(parseInt(e.target.value))}
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     />
                   </div>
@@ -49,7 +59,7 @@ const PopOver = ({ isOpen, closeModal, foodName }) => {
                     <button
                       type="button"
                       className="inline-flex justify-center rounded-md border border-transparent bg-black px-4 py-2 text-sm font-medium text-white hover:bg-opacity-75 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                      onClick={closeModal}
+                      onClick={handleUpdate}
                     >
                       Update
                     </button>
