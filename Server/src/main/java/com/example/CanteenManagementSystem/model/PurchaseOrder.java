@@ -124,6 +124,8 @@
 package com.example.CanteenManagementSystem.model;
 
 import jakarta.persistence.*;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -151,14 +153,14 @@ public class PurchaseOrder {
     private List<FoodInventory> foodItems;
 
     
-    
-    @JsonIgnore
+//    @JsonIgnore
     public StudentForm getStudentForm() {
         return studentForm;
     }
     
     public PurchaseOrder() {
 		super();
+        this.foodItems = new ArrayList<>(); // Initialize foodItems with an empty list
 	}
 
 	public PurchaseOrder(int order_id, float quantity, int totalAmount, Date date_time, String status, List<FoodInventory> foodItems) {
@@ -169,8 +171,21 @@ public class PurchaseOrder {
         this.status = status;
         this.foodItems = foodItems;
     }
+	
 
-    public int getOrder_id() {
+    public PurchaseOrder(int order_id, float quantity, int totalAmount, Date date_time, String status,
+			StudentForm studentForm, List<FoodInventory> foodItems) {
+		super();
+		this.order_id = order_id;
+		this.quantity = quantity;
+		this.totalAmount = totalAmount;
+		this.date_time = date_time;
+		this.status = status;
+		this.studentForm = studentForm;
+		this.foodItems = foodItems;
+	}
+
+	public int getOrder_id() {
         return order_id;
     }
 

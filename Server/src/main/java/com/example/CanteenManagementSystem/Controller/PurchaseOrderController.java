@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.CanteenManagementSystem.model.FoodInventory;
 import com.example.CanteenManagementSystem.model.PurchaseOrder;
 import com.example.CanteenManagementSystem.model.StudentForm;
+import com.example.CanteenManagementSystem.repository.FoodInventoryRepo;
+import com.example.CanteenManagementSystem.repository.PurchaseOrderRepo;
 import com.example.CanteenManagementSystem.repository.StudentFormRepo;
 import com.example.CanteenManagementSystem.service.FoodInventoryService;
 import com.example.CanteenManagementSystem.service.PurchaseOrderService;
@@ -73,7 +75,7 @@ public class PurchaseOrderController {
 	FoodInventoryService foodInventoryService;
 	
 	
-	@PostMapping
+	/*@PostMapping
 	public ResponseEntity<?> addBulkOrders(@RequestBody List<PurchaseOrder> orders) {
 	    List<PurchaseOrder> addedOrders = new ArrayList<>();
 
@@ -88,7 +90,6 @@ public class PurchaseOrderController {
 	                student.setWallet(updatedWalletBalance);
 	                studentRepo.save(student);
 
-	                // Iterate over food items in the order and update food inventory
 	                for (FoodInventory item : order.getFoodItems()) {
 	                    Optional<FoodInventory> optionalFood = Optional.ofNullable(foodInventoryService.getFoodById(item.getFood_id()));
 	                    if (optionalFood.isPresent()) {
@@ -106,6 +107,65 @@ public class PurchaseOrderController {
 	                }
 
 	                PurchaseOrder addedOrder = purchaseService.addOrder(order);
+	                addedOrders.add(addedOrder);
+	            } else {
+	                return ResponseEntity.badRequest().body("Insufficient balance for student ID: " + student.getStudent_id());
+	            }
+	        } else {
+	            return ResponseEntity.badRequest().body("Student ID not found: " + order.getStudentForm().getStudent_id());
+	        }
+	    }
+
+	    return new ResponseEntity<>(addedOrders, HttpStatus.CREATED);
+	}*/
+	
+	@Autowired
+	FoodInventoryRepo foodInventoryRepository;
+	@Autowired
+	PurchaseOrderRepo purchaseOrderRepository;
+	
+	@PostMapping
+	public ResponseEntity<?> addBulkOrders(@RequestBody List<PurchaseOrder> orders) {
+	    List<PurchaseOrder> addedOrders = new ArrayList<>();
+
+	    
+	    for (PurchaseOrder order : orders) {
+	    	
+		    System.out.println(order.getFoodItems()+"--------");
+
+//	        if (order.getFoodItems() == null || order.getFoodItems().isEmpty()) {
+//	            return ResponseEntity.badRequest().body("Food items not found for order");
+//	        }
+
+	        Optional<StudentForm> optionalStudent = studentRepo.findById(order.getStudentForm().getStudent_id());
+
+	        if (optionalStudent.isPresent()) {
+	            StudentForm student = optionalStudent.get();
+	            int updatedWalletBalance = student.getWallet() - order.getTotalAmount();
+
+	            if (updatedWalletBalance >= 0) {
+	                student.setWallet(updatedWalletBalance);
+	                studentRepo.save(student);
+
+	                for (FoodInventory item : order.getFoodItems()) {
+	                    Optional<FoodInventory> optionalFood = foodInventoryRepository.findById(item.getFood_id());
+
+	                    if (optionalFood.isPresent()) {
+	                        FoodInventory food = optionalFood.get();
+	                        int remainingQuantity = food.getQuantity() - item.getQuantity();
+
+	                        if (remainingQuantity >= 0) {
+	                            food.setQuantity(remainingQuantity);
+	                            foodInventoryRepository.save(food);
+	                        } else {
+	                            return ResponseEntity.badRequest().body("Insufficient quantity for food ID: " + food.getFood_id());
+	                        }
+	                    } else {
+	                        return ResponseEntity.badRequest().body("Food ID not found: " + item.getFood_id());
+	                    }
+	                }
+
+	                PurchaseOrder addedOrder = purchaseOrderRepository.save(order);
 	                addedOrders.add(addedOrder);
 	            } else {
 	                return ResponseEntity.badRequest().body("Insufficient balance for student ID: " + student.getStudent_id());

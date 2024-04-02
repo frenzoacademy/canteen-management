@@ -36,8 +36,8 @@ public class FoodInventory {
 	private String photoBase64; 
 
 	@ManyToMany(mappedBy = "foodItems")
-    @JsonIgnore
     private List<PurchaseOrder> purchaseOrders;
+//  @JsonIgnore
 
 	
 	public String getPhotoBase64() {

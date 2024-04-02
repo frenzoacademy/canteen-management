@@ -36,13 +36,8 @@ public class StudentForm {
 	private byte[] imageData;
 
 	@OneToMany(mappedBy = "studentForm")
-    @JsonIgnore
     private List<PurchaseOrder> purchaseOrders;
-
-	
-//	@ManyToMany
-//	@JoinTable(name = "studentform_purchaseorder", joinColumns = @JoinColumn(name = "student_id"), inverseJoinColumns = @JoinColumn(name = "food_id"))
-//	private List<PurchaseOrder> purchaseOrders;
+//  @JsonIgnore
 
 	public StudentForm(int student_id, long rfid_Number, String first_name, String last_name, String department,
 			String aadhar_number, long mob_number, String address, String email, LocalDate date_time, String password,
