@@ -1,5 +1,6 @@
 package com.example.CanteenManagementSystem.model;
 
+import java.io.Serializable;
 import java.sql.Blob;
 import java.util.List;
 
@@ -15,7 +16,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Transient;
 
 @Entity
-public class CanteenManager {
+public class CanteenManager implements Serializable{
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
@@ -27,6 +28,9 @@ public class CanteenManager {
 	private String password;
 	private long mob_number;
 
+	 @Lob
+	 private String formJson;
+	
 	@Lob
 	@JsonIgnore
 	private Blob image; // Store the image as Blob

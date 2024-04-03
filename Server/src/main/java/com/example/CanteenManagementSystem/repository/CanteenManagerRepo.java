@@ -14,6 +14,9 @@ public interface CanteenManagerRepo extends JpaRepository<CanteenManager,Integer
 
 	Optional<CanteenManager> getCanteenManagerById(int id);
 
+	Optional<CanteenManager> findByEmail(String email);
+
+
 
 
 }

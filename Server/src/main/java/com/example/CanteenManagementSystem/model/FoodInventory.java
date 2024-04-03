@@ -34,10 +34,10 @@ public class FoodInventory {
 
 	@Transient 
 	private String photoBase64; 
-
+	
+//	@JsonIgnore
 	@ManyToMany(mappedBy = "foodItems")
     private List<PurchaseOrder> purchaseOrders;
-//  @JsonIgnore
 
 	
 	public String getPhotoBase64() {
@@ -199,6 +199,15 @@ public class FoodInventory {
 
 	public void setCanteenManager(CanteenManager canteenManager) {
 		this.canteenManager = canteenManager;
+	}
+
+	@Override
+	public String toString() {
+		return "FoodInventory [food_id=" + food_id + ", name=" + name + ", amount=" + amount + ", isAvailability="
+				+ isAvailability + ", breakfast=" + breakfast + ", lunch=" + lunch + ", eveningfood=" + eveningfood
+				+ ", dinner=" + dinner + ", alltime=" + alltime + ", quantity=" + quantity + ", photo=" + photo
+				+ ", image=" + image + ", photoBase64=" + photoBase64 + ", purchaseOrders=" + purchaseOrders
+				+ ", canteenManager=" + canteenManager + "]";
 	}
 
 }

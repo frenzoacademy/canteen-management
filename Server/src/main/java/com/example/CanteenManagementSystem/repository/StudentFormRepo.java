@@ -12,9 +12,24 @@ import com.example.CanteenManagementSystem.model.StudentForm;
 @Repository
 public interface StudentFormRepo extends JpaRepository<StudentForm, Integer> {
 
-	List<StudentForm> findAll();
+	/*List<StudentForm> findAll();
 
 	StudentForm save(StudentForm student);
+	
+	@Query("SELECT s FROM StudentForm s WHERE s.email = ?1")
+	Optional<StudentForm> findByEmail(String username);
+
+	Optional<StudentForm> findByStudentForm(Object user);*/
+	 List<StudentForm> findAll();
+
+	    StudentForm save(StudentForm student);
+	    
+	    @Query("SELECT s FROM StudentForm s WHERE s.email = :email")
+	    Optional<StudentForm> findByEmail(@Param("email") String email);
+
+//	    Optional<StudentForm> findByForm(Object form);
+
+
 
 
 }

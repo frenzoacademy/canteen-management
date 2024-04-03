@@ -3,6 +3,7 @@ package com.example.CanteenManagementSystem.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+import java.io.Serializable;
 import java.sql.Blob;
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -10,9 +11,10 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import org.hibernate.annotations.Type;
 
 @Entity
-public class StudentForm {
+public class StudentForm implements Serializable{
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int student_id;
@@ -27,17 +29,22 @@ public class StudentForm {
 	private LocalDate date_time;
 	private String password;
 	private int wallet;
+
+    private boolean student;
+
+	 @Lob
+	 private String formJson;
 	
-	@Lob
+	 @Lob
 	@JsonIgnore
 	private Blob image;
 
 	@JsonIgnore // Ignore imageData during serialization
 	private byte[] imageData;
-
+	
+//	@JsonIgnore
 	@OneToMany(mappedBy = "studentForm")
     private List<PurchaseOrder> purchaseOrders;
-//  @JsonIgnore
 
 	public StudentForm(int student_id, long rfid_Number, String first_name, String last_name, String department,
 			String aadhar_number, long mob_number, String address, String email, LocalDate date_time, String password,
@@ -191,6 +198,14 @@ public class StudentForm {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public boolean isStudent() {
+		return true;
+	}
+
+	public void setStudent(boolean student) {
+		this.student = student;
 	}
 
 }

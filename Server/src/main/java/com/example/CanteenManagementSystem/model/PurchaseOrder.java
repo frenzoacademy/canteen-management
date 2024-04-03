@@ -141,6 +141,7 @@ public class PurchaseOrder {
     private int totalAmount;
     private Date date_time;
     private String status;
+    private int food_id;
 
     @ManyToOne
     @JoinColumn(name = "student_id") 
@@ -225,9 +226,6 @@ public class PurchaseOrder {
         this.status = status;
     }
 
-//    public StudentForm getStudentForm() {
-//        return studentForm;
-//    }
 
     public void setStudentForm(StudentForm studentForm) {
         this.studentForm = studentForm;
@@ -240,4 +238,20 @@ public class PurchaseOrder {
     public void setFoodItems(List<FoodInventory> foodItems) {
         this.foodItems = foodItems;
     }
+
+	public int getFood_id() {
+		return food_id;
+	}
+
+	public void setFood_id(int food_id) {
+		this.food_id = food_id;
+	}
+
+//	@Override
+//	public String toString() {
+//		return "PurchaseOrder [order_id=" + order_id + ", quantity=" + quantity + ", totalAmount=" + totalAmount
+//				+ ", date_time=" + date_time + ", status=" + status + ", studentForm=" + studentForm + ", foodItems="
+//				+ foodItems + "]";
+//	}
+    
 }

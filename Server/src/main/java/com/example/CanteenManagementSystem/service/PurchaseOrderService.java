@@ -60,4 +60,8 @@ public class PurchaseOrderService {
 		}).orElseThrow(() -> new RuntimeException("Purchase Order with ID " + id + " not found"));
 	}
 
+//	 public void deletePurchaseOrdersByStudentId(int studentId) {
+//	        purchaseRepo.deleteByStudent_id(studentId);
+//	    }
+
 }
