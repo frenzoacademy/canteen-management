@@ -43,7 +43,9 @@ const CanteenUserForm = ({ editId }) => {
   }
 
   useEffect(() => {
-    setValue("file", image);
+    if (!editId) {
+      setValue("file", image);
+    }
   }, [image, setValue]);
 
   useEffect(() => {
@@ -55,7 +57,6 @@ const CanteenUserForm = ({ editId }) => {
       setValue("aadhar_number", data.aadhar_number || false);
       setValue("mob_number", data.mob_number || false);
       setValue("password", data.password || false);
-      setValue("file", data.photoBase64 || false);
     }
   }, [data, editId]);
 
@@ -121,20 +122,22 @@ const CanteenUserForm = ({ editId }) => {
               {errors?.last_name?.message}
             </h1>
           </div>
+          {!editId && (
+            <div>
+              <label
+                htmlFor="Image"
+                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              >
+                Image{" "}
+              </label>
+              <input
+                type="file"
+                onChange={(e) => setImage(e.target.files[0])}
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              />
+            </div>
+          )}
 
-          <div>
-            <label
-              htmlFor="Image"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              Image{" "}
-            </label>
-            <input
-              type="file"
-              onChange={(e) => setImage(e.target.files[0])}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            />
-          </div>
           <div>
             <label
               htmlFor="email"

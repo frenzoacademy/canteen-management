@@ -34,10 +34,10 @@ const FoodInventoryForm = ({ editId }) => {
       eveningfood: false,
       dinner: false,
       alltime: false,
-      amount: "",
+      amount: 0,
     },
   });
-  console.log(watch());
+
   if (isSuccess || editSuccess) {
     route.push(`/inventory`);
   }
@@ -52,17 +52,22 @@ const FoodInventoryForm = ({ editId }) => {
       setValue("eveningfood", data.eveningfood || false);
       setValue("dinner", data.dinner || false);
       setValue("alltime", data.alltime || false);
-      setValue("file", data.photoBase64 || "");
-      setValue("amount", data.amount || "");
+      setValue("amount", data.amount || 0);
     }
   }, [data, editId]);
 
+  const handleFileChange = (e) => {
+    const selectedImage = e.target.files[0];
+    setImage(selectedImage);
+  };
+
   useEffect(() => {
-    setValue("file", image);
+    if (!editId) {
+      setValue("file", image);
+    }
   }, [image, setValue]);
 
   const onSubmit = (data) => {
-    console.log({ data });
     try {
       const formData = new FormData();
 
@@ -71,7 +76,7 @@ const FoodInventoryForm = ({ editId }) => {
       });
 
       const response = editId
-        ? updateInventory({ id: editId, values: data })
+        ? updateInventory({ id: editId, values: formData })
         : addInventory(formData);
       reset();
     } catch (error) {
@@ -106,34 +111,37 @@ const FoodInventoryForm = ({ editId }) => {
             </h1>
           </div>
 
-          <div>
-            <label
-              htmlFor="Image"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              Image
-            </label>
-            <input
-              type="file"
-              onChange={(e) => setImage(e.target.files[0])}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            />
-          </div>
-
-          <div>
-            <label
-              htmlFor="quantity"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              Quantity
-            </label>
-            <input
-              type="number"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="Quantity"
-              {...register("quantity")}
-            />
-          </div>
+          {!editId && (
+            <>
+              <div>
+                <label
+                  htmlFor="quantity"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
+                  Quantity
+                </label>
+                <input
+                  type="number"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder="Quantity"
+                  {...register("quantity")}
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="Image"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
+                  Image
+                </label>
+                <input
+                  type="file"
+                  onChange={handleFileChange}
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                />
+              </div>
+            </>
+          )}
           <div>
             <h1 className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
               Is Available
@@ -169,7 +177,7 @@ const FoodInventoryForm = ({ editId }) => {
               {errors?.amount?.message}
             </h1>
           </div>
-          <div className="col-start-1  sm:col-span-3 md:col-span-2 col-span-1">
+          <div className="col-start-1  sm:col-span-3 md:col-span-3 col-span-1">
             <h1 className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
               Meal Timing
             </h1>
