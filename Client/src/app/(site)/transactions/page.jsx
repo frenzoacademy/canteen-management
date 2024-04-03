@@ -1,4 +1,6 @@
+"use client";
 import WalletBalance from "@/components/WalletBalance";
+import { useGetPurchaseOrders } from "@/features/purchase-order/purchaseOrder.hooks";
 
 const transactions = [
   {
@@ -28,6 +30,9 @@ const transactions = [
 ];
 
 const Page = () => {
+  const { data } = useGetPurchaseOrders();
+  console.log(data);
+
   return (
     <div>
       <WalletBalance />

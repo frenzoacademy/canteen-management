@@ -1,20 +1,40 @@
 "use client";
 import FoodCard from "@/components/FoodCard";
+import FoodCourtScanner from "@/components/FoodCourtScanner";
 import { useGetFoodInventories } from "@/features/foodInventory/foodInventory.hooks";
 import { useAddPurchaseOrder } from "@/features/purchase-order/purchaseOrder.hooks";
+import { useGetStudents } from "@/features/students/students.hooks";
 import { ArrowRightIcon } from "@heroicons/react/24/outline";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const Page = () => {
   const [cart, setCart] = useState([]);
-  console.log(cart);
-  const [walletAmount, setWalletAmount] = useState(800);
+  const [rfid, setRfid] = useState(null);
+  const [scannedStudent, setScannedStudent] = useState(null);
+  const [walletAmount, setWalletAmount] = useState(0);
   const { data } = useGetFoodInventories();
-  const { mutate } = useAddPurchaseOrder();
+  const { data: studentsData } = useGetStudents();
+  const { mutate, isSuccess } = useAddPurchaseOrder();
 
+  useEffect(() => {
+    const filteredStudent = studentsData?.find(
+      (item) => item?.rfid_Number == rfid
+    );
+    setScannedStudent(filteredStudent);
+    setWalletAmount(filteredStudent?.wallet);
+  }, [rfid]);
+
+  const addRfid = (id) => {
+    setRfid(id);
+  };
   const handlePurchase = () => {
     mutate(cart);
   };
+
+  // if (isSuccess) {
+  //   setScannedStudent(null);
+  //   setCart([]);
+  // }
 
   const addToCartHandler = (item) => {
     console.log({ item });
@@ -57,7 +77,7 @@ const Page = () => {
           const newItem = {
             ...item,
             studentForm: {
-              student_id: 5,
+              student_id: scannedStudent?.student_id,
             },
             status: "success",
             date: new Date(),
@@ -71,12 +91,11 @@ const Page = () => {
   };
   return (
     <div>
-      <div className="px-3 py-2 bg-red-200 mb-5 text-red-600 border-red-500 border rounded-md">
-        <h1 className="font-normal text-sm ">Scan your RFID card to order</h1>
-      </div>
+      <FoodCourtScanner rfid={rfid} addRfid={addRfid} />
       <div className="bg-black py-4 px-5 rounded-md text-white flex justify-between items-center">
         <div>
-          <h1 className="font-medium text-lg">Your</h1>
+          <h1 className="font-medium text-lg">{scannedStudent?.First_name}</h1>
+
           <h1 className=" font-bold text-xl flex gap-5 items-center">
             Wallet Amount <ArrowRightIcon className="h-5 w-5" />
           </h1>

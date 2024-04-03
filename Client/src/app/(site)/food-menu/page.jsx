@@ -57,6 +57,7 @@ const Page = () => {
                 key={index}
                 id={food.food_id}
                 name={food.name}
+                quantity={food?.quantity}
                 amount={food.amount}
                 image={food.photoBase64}
               />

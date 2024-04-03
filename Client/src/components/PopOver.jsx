@@ -1,17 +1,27 @@
 "use client";
-import { useEditFoodInventory } from "@/features/foodInventory/foodInventory.hooks";
+import {
+  useEditFoodInventory,
+  useGetFoodInventory,
+} from "@/features/foodInventory/foodInventory.hooks";
 import { Dialog, Transition } from "@headlessui/react";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 
 const PopOver = ({ isOpen, closeModal, foodName, food_id }) => {
+  const { data } = useGetFoodInventory(food_id);
   const [quantity, setQuantity] = useState(0);
-  const { mutate } = useEditFoodInventory();
+  const { mutate, isSuccess } = useEditFoodInventory();
+  useEffect(() => {
+    setQuantity(data?.quantity);
+  }, [data]);
   const handleUpdate = () => {
     mutate({
       id: food_id,
       values: { quantity },
     });
   };
+  if (isSuccess) {
+    closeModal();
+  }
   return (
     <>
       <Transition appear show={isOpen || false} as={Fragment}>
@@ -50,6 +60,7 @@ const PopOver = ({ isOpen, closeModal, foodName, food_id }) => {
                     <input
                       type="number"
                       placeholder="Quantity"
+                      value={quantity}
                       onChange={(e) => setQuantity(parseInt(e.target.value))}
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     />

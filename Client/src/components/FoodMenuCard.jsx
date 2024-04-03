@@ -3,7 +3,7 @@ import Image from "next/image";
 import PopOver from "./PopOver";
 import { useState } from "react";
 
-const FoodMenuCard = ({ image, name, amount, id }) => {
+const FoodMenuCard = ({ image, name, amount, id, quantity }) => {
   const [isPopOverOpen, setIsPopOverOpen] = useState(false);
 
   const openPopOver = () => {
@@ -27,6 +27,7 @@ const FoodMenuCard = ({ image, name, amount, id }) => {
       <div className="px-6 py-4">
         <div className="font-bold text-xl mb-2">{name}</div>
         <p className="text-gray-700 text-base">$ {amount}</p>
+        <p className="text-gray-400 text-sm mt-2">Quantity : {quantity}</p>
         <div className="flex justify-between mt-4">
           <div className="flex">
             <button

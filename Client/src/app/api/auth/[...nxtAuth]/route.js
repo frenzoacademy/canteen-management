@@ -1,17 +1,35 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
+const users = [
+  {
+    id: 1,
+    username: "testuser",
+    email: "test@gmail.com",
+    password: 12345678,
+  },
+  {
+    id: 2,
+    username: "testuser",
+    email: "admin@gmail.com",
+    password: 12345678,
+  },
+];
+
 export const authOptions = {
   providers: [
     CredentialsProvider({
       name: "credentials",
       credentials: {},
       async authorize(credentials) {
-        try {
-          const authResponse = await axios.post("/login", credentials);
-          console.log(authResponse);
-          return authResponse?.data?.data;
-        } catch (ex) {
+        const { email, password } = credentials;
+        const user = users.find(
+          (user) => user.email === email && user.password === password
+        );
+
+        if (user) {
+          return user;
+        } else {
           return null;
         }
       },
@@ -45,6 +63,11 @@ export const authOptions = {
         };
       }
       return token;
+    },
+    onError: async (error, _context) => {
+      // Handle the error
+      console.error("NextAuth Error:", error);
+      // Redirect the user or perform any other action
     },
   },
 };
