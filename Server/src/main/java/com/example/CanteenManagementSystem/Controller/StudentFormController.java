@@ -81,6 +81,8 @@ public class StudentFormController {
 				String base64Photo = Base64.encodeBase64String(photoBytes.getBytes(1, (int) photoBytes.length()));
 				StudentFormResponse studentResponse = getStudentFormResponse(room);
 				studentResponse.setImage(base64Photo);
+				studentResponse.setPassword(room.getPassword());
+				studentResponse.setWallet(room.getWallet());
 				studentResponses.add(studentResponse);
 			}
 		}
