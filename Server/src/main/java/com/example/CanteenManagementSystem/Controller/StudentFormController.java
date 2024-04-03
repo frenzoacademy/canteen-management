@@ -48,7 +48,6 @@ public class StudentFormController {
 	public ResponseEntity<StudentFormResponse> getStudentById(@PathVariable int id) {
 		StudentForm s = studentService.getStudentById(id);
 		StudentFormResponse response = new StudentFormResponse();
-		// Convert Blob to byte array
 		if (s != null && s.getImage() != null) {
 			try {
 				Blob photoBytes = studentService.getStudentPhotoByStudentId(id);
@@ -62,6 +61,11 @@ public class StudentFormController {
 				e.printStackTrace();
 			}
 			response.setDate_Time(s.getDate_time());
+			response.setWallet(s.getWallet());
+			response.setPassword(s.getPassword());
+			
+			System.out.println(s.getPassword()+": password");
+			System.out.println(s.getWallet()+" wallet");
 		}
 		System.out.println("---------------------" + response + "---------");
 		return new ResponseEntity<>(response, HttpStatus.OK);

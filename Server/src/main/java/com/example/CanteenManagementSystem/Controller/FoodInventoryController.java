@@ -45,6 +45,7 @@ public class FoodInventoryController {
 	@GetMapping
 	public ResponseEntity<List<FoodInventory>> getAllFoods() throws Exception {
 		List<FoodInventory> foods = foodInventoryService.getAllFoods();
+		System.out.println(foods.size()+"   size");
 		for (FoodInventory food : foods) {
 			Blob photoBytes = foodInventoryService.getFoodPhotoByFoodId(food.getFood_id());
 

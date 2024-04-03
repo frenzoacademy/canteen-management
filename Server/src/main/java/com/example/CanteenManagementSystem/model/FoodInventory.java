@@ -1,14 +1,21 @@
 package com.example.CanteenManagementSystem.model;
 
-import jakarta.persistence.*;
-
-import java.math.BigDecimal;
 import java.sql.Blob;
-import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Transient;
 
 @Entity
 public class FoodInventory {
@@ -35,8 +42,8 @@ public class FoodInventory {
 	@Transient 
 	private String photoBase64; 
 	
-//	@JsonIgnore
 	@ManyToMany(mappedBy = "foodItems")
+	@JsonIgnore
     private List<PurchaseOrder> purchaseOrders;
 
 	
@@ -50,6 +57,7 @@ public class FoodInventory {
 
 	@ManyToOne
 	@JoinColumn(name = "canteenManager_id") // Assuming the foreign key column name
+//    @JsonBackReference // Mark as "back" side of relationship
 	private CanteenManager canteenManager;
 
 	public FoodInventory(int food_id, String name, int amount, boolean isAvailability, boolean breakfast, boolean lunch,

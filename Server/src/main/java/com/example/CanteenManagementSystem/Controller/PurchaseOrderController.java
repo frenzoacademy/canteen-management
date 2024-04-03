@@ -1,6 +1,7 @@
 package com.example.CanteenManagementSystem.Controller;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -72,7 +73,9 @@ public class PurchaseOrderController {
 
 	    return new ResponseEntity<>(addedOrders, HttpStatus.CREATED);
 	}*/
-	@PostMapping
+	
+	
+	/*@PostMapping
 	@Transactional
 	public List<PurchaseOrder> addOrders(@RequestBody List<PurchaseOrder> newOrders) {
 	    List<PurchaseOrder> savedOrders = new ArrayList<>();
@@ -119,7 +122,132 @@ public class PurchaseOrderController {
 	    }
 
 	    return savedOrders;
+	}*/
+	
+	
+	/*@PostMapping
+	@Transactional
+	public List<PurchaseOrder> addOrders(@RequestBody List<PurchaseOrder> newOrders) {
+	    List<PurchaseOrder> savedOrders = new ArrayList<>();
+	    System.out.println("newOrders---" + newOrders.size());
+
+	    for (PurchaseOrder newOrder : newOrders) {
+
+	        Optional<StudentForm> studentOptional = studentRepo.findById(newOrder.getStudentForm().getStudent_id());
+
+	        if (studentOptional.isPresent()) {
+	            StudentForm student = studentOptional.get();
+	            
+	            int currentBalance = student.getWallet();
+	            int bill = newOrder.getTotalAmount();
+		        System.out.println(student.getWallet()+"prev wallet-------");
+		        System.out.println(newOrder.getTotalAmount()+"current amount-------");
+		        System.out.println(currentBalance - bill);
+		        System.out.println("current available wallet");
+	            if (currentBalance >= bill) {
+	                student.setWallet(currentBalance - bill);
+	                studentRepo.save(student);
+	                newOrder.setStudentForm(student);
+	            } else {
+	                throw new IllegalArgumentException("Insufficient balance for student with ID: " + student.getStudent_id());
+	            }
+	        } else {
+	            throw new IllegalArgumentException("Student not found with ID: " + newOrder.getStudentForm().getStudent_id());
+	        }
+
+	        Optional<FoodInventory> foodData = foodInventoryRepository.findByFoodId(newOrder.getFood_id());
+
+	        if (foodData.isPresent()) {
+	            FoodInventory foodInventory = foodData.get();
+	            System.out.println("Before Update :" + foodInventory.getQuantity());
+
+	            int prevQuantity = foodInventory.getQuantity();
+	            int newQuantity = (int) newOrder.getQuantity();
+
+	            if (prevQuantity >= newQuantity) {
+	            	foodInventory.setQuantity(prevQuantity - newQuantity);
+		            foodInventory = foodInventoryRepository.save(foodInventory); // This should update the existing record
+		            System.out.println("After Update :" + foodInventory.getQuantity());
+		        
+	            } else {
+	                throw new IllegalArgumentException("Insufficient Quantity for food with ID: "+foodData.get().getFood_id());
+	            }
+	            }
+
+	        System.out.println("foodItems :" + foodData);
+	    	System.out.println(newOrder.getStudentForm().getWallet()+"============");
+
+	        savedOrders.add(purchaseOrderRepository.save(newOrder));
+	    }
+
+//	    for (PurchaseOrder order : savedOrders) {
+//	    	System.out.println(order.getStudentForm().getWallet()+"============");
+//	    }
+	    return savedOrders;
+	}*/
+	
+	
+	@PostMapping
+	@Transactional
+	public List<PurchaseOrder> addOrders(@RequestBody List<PurchaseOrder> newOrders) {
+	    List<PurchaseOrder> savedOrders = new ArrayList<>();
+	    System.out.println("newOrders---" + newOrders.size());
+
+	    for (PurchaseOrder newOrder : newOrders) {
+	        // Retrieve the StudentForm associated with the PurchaseOrder
+	        Optional<StudentForm> studentOptional = studentRepo.findById(newOrder.getStudentForm().getStudent_id());
+
+	        if (studentOptional.isPresent()) {
+	            StudentForm student = studentOptional.get();
+	            
+	            int currentBalance = student.getWallet();
+	            int bill = newOrder.getTotalAmount();
+	            System.out.println(student.getWallet() + "prev wallet-------");
+	            System.out.println(newOrder.getTotalAmount() + "current amount-------");
+	            System.out.println(currentBalance - bill);
+	            System.out.println("current available wallet");
+	            
+	            if (currentBalance >= bill) {
+	                student.setWallet(currentBalance - bill);
+	                studentRepo.save(student);
+	                newOrder.setStudentForm(student);
+	            } else {
+	                throw new IllegalArgumentException("Insufficient balance for student with ID: " + student.getStudent_id());
+	            }
+	        } else {
+	            throw new IllegalArgumentException("Student not found with ID: " + newOrder.getStudentForm().getStudent_id());
+	        }
+
+	        // Retrieve the FoodInventory associated with the PurchaseOrder
+	        Optional<FoodInventory> foodData = foodInventoryRepository.findByFoodId(newOrder.getFood_id());
+
+	        if (foodData.isPresent()) {
+	            FoodInventory foodInventory = foodData.get();
+	            System.out.println("Before Update :" + foodInventory.getQuantity());
+
+	            int prevQuantity = foodInventory.getQuantity();
+	            int newQuantity = (int) newOrder.getQuantity();
+
+	            if (prevQuantity >= newQuantity) {
+	                foodInventory.setQuantity(prevQuantity - newQuantity);
+	                foodInventory = foodInventoryRepository.save(foodInventory); // Update the existing record
+	                System.out.println("After Update :" + foodInventory.getQuantity());
+	                newOrder.setFoodItems(Arrays.asList(foodInventory)); // Set the food items in PurchaseOrder
+	            } else {
+	                throw new IllegalArgumentException("Insufficient Quantity for food with ID: " + foodData.get().getFood_id());
+	            }
+	        }
+
+	        System.out.println("foodItems :" + foodData);
+	        System.out.println(newOrder.getStudentForm().getWallet() + "============");
+
+	        savedOrders.add(purchaseOrderRepository.save(newOrder));
+	    }
+
+	    return savedOrders;
 	}
+
+
 
 	
 	@Autowired

@@ -43,10 +43,18 @@ public class StudentFormResponse {
 	private String password;
 
 	@JsonProperty("wallet")
-	private String wallet;
+	private int wallet;
 	
 	public StudentFormResponse() {
 		super();
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 	public StudentFormResponse(int student_id, long rfid_Number, String first_name, String last_name, String department,
@@ -62,6 +70,14 @@ public class StudentFormResponse {
 		this.address = address;
 		this.email = email;
 		this.date_time = date_time;
+	}
+
+	public int getWallet() {
+		return wallet;
+	}
+
+	public void setWallet(int wallet) {
+		this.wallet = wallet;
 	}
 
 	public StudentFormResponse(int student_id, long rfid_Number, String first_name, String last_name, String department,

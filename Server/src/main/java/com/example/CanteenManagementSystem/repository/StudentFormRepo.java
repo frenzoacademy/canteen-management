@@ -27,6 +27,7 @@ public interface StudentFormRepo extends JpaRepository<StudentForm, Integer> {
 	    @Query("SELECT s FROM StudentForm s WHERE s.email = :email")
 	    Optional<StudentForm> findByEmail(@Param("email") String email);
 
+
 //	    Optional<StudentForm> findByForm(Object form);
 
 
