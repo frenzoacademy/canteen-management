@@ -1,6 +1,5 @@
 package com.example.CanteenManagementSystem.config;
 
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -76,63 +75,60 @@ import java.util.List;
 
 public class UserInfoUserDetails implements UserDetails {
 
-    private String username;
-    private String password;
-    private List<GrantedAuthority> authorities;
+	private String username;
+	private String password;
+	private List<GrantedAuthority> authorities;
 
-    public UserInfoUserDetails(StudentForm studentForm) {
-    	
-    	System.out.println(studentForm.getEmail()+"---------");
-        this.username = studentForm.getEmail();
-        this.password = studentForm.getPassword();
-        this.authorities = new ArrayList<>();
-        if (studentForm.isStudent()) {
-            authorities.add(new SimpleGrantedAuthority("ROLE_STUDENT"));
-        } else {
-        }
-    }
+	public UserInfoUserDetails(StudentForm studentForm) {
 
-    public UserInfoUserDetails(CanteenManager canteenManager) {
-        this.username = canteenManager.getEmail();
-        this.password = canteenManager.getPassword();
-        this.authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority("ROLE_CANTEEN_MANAGER"));
-    }
+		this.username = studentForm.getEmail();
+		this.password = studentForm.getPassword();
+		this.authorities = new ArrayList<>();
+		if (studentForm.isStudent()) {
+			authorities.add(new SimpleGrantedAuthority("ROLE_STUDENT"));
+		} else {
+		}
+	}
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authorities;
-    }
+	public UserInfoUserDetails(CanteenManager canteenManager) {
+		this.username = canteenManager.getEmail();
+		this.password = canteenManager.getPassword();
+		this.authorities = new ArrayList<>();
+		authorities.add(new SimpleGrantedAuthority("ROLE_CANTEEN_MANAGER"));
+	}
 
-    @Override
-    public String getPassword() {
-        return password;
-    }
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		return authorities;
+	}
 
-    @Override
-    public String getUsername() {
-        return username;
-    }
+	@Override
+	public String getPassword() {
+		return password;
+	}
 
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
+	@Override
+	public String getUsername() {
+		return username;
+	}
 
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
+	@Override
+	public boolean isAccountNonExpired() {
+		return true;
+	}
 
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
+	@Override
+	public boolean isAccountNonLocked() {
+		return true;
+	}
 
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
+	@Override
+	public boolean isCredentialsNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return true;
+	}
 }
-
-

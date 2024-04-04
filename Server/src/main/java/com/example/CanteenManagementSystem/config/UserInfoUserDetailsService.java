@@ -1,6 +1,5 @@
 package com.example.CanteenManagementSystem.config;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -16,36 +15,24 @@ import java.util.Optional;
 
 @Component
 public class UserInfoUserDetailsService implements UserDetailsService {
+	@Autowired
+	private UserInfoRepository studentRepository;
 
-//    @Autowired
-//    private UserInfoRepository repository;
+	@Autowired
+	private CanteenManagerRepo canteenManagerRepository;
 
-    /*@Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Optional<StudentForm> userInfo = repository.findByEmail(email);
-        return userInfo.map(UserInfoUserDetails::new)
-                .orElseThrow(() -> new UsernameNotFoundException("user not found " + email));
+	@Override
+	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+		Optional<StudentForm> studentInfo = studentRepository.findByEmail(email);
+		if (studentInfo.isPresent()) {
+			return new UserInfoUserDetails(studentInfo.get());
+		}
 
-    }*/
-    @Autowired
-    private UserInfoRepository studentRepository;
+		Optional<CanteenManager> canteenManagerInfo = canteenManagerRepository.findByEmail(email);
+		if (canteenManagerInfo.isPresent()) {
+			return new UserInfoUserDetails(canteenManagerInfo.get());
+		}
 
-    @Autowired
-    private CanteenManagerRepo canteenManagerRepository;
-
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Optional<StudentForm> studentInfo = studentRepository.findByEmail(email);
-        if (studentInfo.isPresent()) {
-            return new UserInfoUserDetails(studentInfo.get());
-        }
-
-        Optional<CanteenManager> canteenManagerInfo = canteenManagerRepository.findByEmail(email);
-        if (canteenManagerInfo.isPresent()) {
-            return new UserInfoUserDetails(canteenManagerInfo.get());
-        }
-
-        throw new UsernameNotFoundException("User not found with email: " + email);
-    }
+		throw new UsernameNotFoundException("User not found with email: " + email);
+	}
 }
-

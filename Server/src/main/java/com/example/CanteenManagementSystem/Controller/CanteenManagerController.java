@@ -74,48 +74,76 @@ public class CanteenManagerController {
 	@Autowired
 	CanteenManagerRepo canteenManagerRepo;
 
+	/*@PutMapping("/{id}")
+	public ResponseEntity<CanteenManager> updateManagerByField(@PathVariable int id,
+			@RequestParam(value="first_name",required = false) String first_name,
+			@RequestParam(value="last_name",required = false) String last_name,
+			@RequestParam(value="email",required = false) String email, 
+			@RequestParam(value="address",required = false) String address,
+			@RequestParam(value="aadhar_number",required = false) long aadhar_number,
+			@RequestParam(value="password",required = false) String password,
+			@RequestParam(value="mob_number",required = false) long mob_number) {
+
+		Optional<CanteenManager> optionalManager = canteenManagerRepo.getCanteenManagerById(id);
+		if (!optionalManager.isPresent()) {
+			return ResponseEntity.notFound().build();
+		}
+
+		CanteenManager manager = optionalManager.get();
+		manager.setFirst_name(first_name);
+		manager.setLast_name(last_name);
+		manager.setEmail(email);
+		manager.setAddress(address);
+		manager.setAadhar_number(aadhar_number);
+		manager.setPassword(password);
+		manager.setMob_number(mob_number);
+
+		CanteenManager updatedManager = canteenManagerService.updateManager(manager);
+		return ResponseEntity.ok(updatedManager);
+	}*/
 	@PutMapping("/{id}")
 	public ResponseEntity<CanteenManager> updateManagerByField(@PathVariable int id,
-			@RequestParam(value = "file", required = false) MultipartFile file,
-			@RequestParam("first_name") String first_name, @RequestParam("last_name") String last_name,
-			@RequestParam("email") String email, @RequestParam("address") String address,
-			@RequestParam("aadhar_number") long aadhar_number, @RequestParam("password") String password,
-			@RequestParam("mob_number") long mob_number) {
+	        @RequestParam(value="first_name", required = false) String first_name,
+	        @RequestParam(value="last_name", required = false) String last_name,
+	        @RequestParam(value="email", required = false) String email, 
+	        @RequestParam(value="address", required = false) String address,
+	        @RequestParam(value="aadhar_number", required = false) Long aadhar_number,
+	        @RequestParam(value="password", required = false) String password,
+	        @RequestParam(value="mob_number", required = false) Long mob_number) {
 
-		try {
-			Optional<CanteenManager> optionalManager = canteenManagerRepo.getCanteenManagerById(id);
-			if (!optionalManager.isPresent()) {
-				return ResponseEntity.notFound().build();
-			}
+	    Optional<CanteenManager> optionalManager = canteenManagerRepo.getCanteenManagerById(id);
+	    if (!optionalManager.isPresent()) {
+	        return ResponseEntity.notFound().build();
+	    }
 
-			CanteenManager manager = optionalManager.get();
-			manager.setFirst_name(first_name);
-			manager.setLast_name(last_name);
-			manager.setEmail(email);
-			manager.setAddress(address);
-			manager.setAadhar_number(aadhar_number);
-			manager.setPassword(password);
-			manager.setMob_number(mob_number);
+	    CanteenManager manager = optionalManager.get();
+	    // Check if parameters are not null and then update the manager
+	    if (first_name != null) {
+	        manager.setFirst_name(first_name);
+	    }
+	    if (last_name != null) {
+	        manager.setLast_name(last_name);
+	    }
+	    if (email != null) {
+	        manager.setEmail(email);
+	    }
+	    if (address != null) {
+	        manager.setAddress(address);
+	    }
+	    if (aadhar_number != null) {
+	        manager.setAadhar_number(aadhar_number);
+	    }
+	    if (password != null) {
+	        manager.setPassword(password);
+	    }
+	    if (mob_number != null) {
+	        manager.setMob_number(mob_number);
+	    }
 
-			if (!file.isEmpty()) {
-				System.out.println("File is not empty");
-				byte[] photoBytes = file.getBytes();
-				Blob photoBlob = new SerialBlob(photoBytes);
-				manager.setImage(photoBlob);
-				Blob imageBlob = manager.getImage();
-
-				String base64Image = Base64.encodeBase64String(imageBlob.getBytes(1, (int) imageBlob.length()));
-
-				manager.setImageBase64(base64Image);
-			}
-
-			CanteenManager updatedManager = canteenManagerService.updateManager(manager);
-			return ResponseEntity.ok(updatedManager);
-		} catch (IOException | SQLException e) {
-			e.printStackTrace();
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-		}
+	    CanteenManager updatedManager = canteenManagerService.updateManager(manager);
+	    return ResponseEntity.ok(updatedManager);
 	}
+
 
 	@PostMapping
 	public ResponseEntity<CanteenManager> addManager(@RequestParam("file") MultipartFile file,

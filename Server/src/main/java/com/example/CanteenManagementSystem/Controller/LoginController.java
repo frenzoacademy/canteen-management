@@ -83,9 +83,9 @@ public class LoginController {
 	private String determineRole(Object user) {
 		if (user instanceof StudentForm) {
 			System.out.println("Student   :");
-			return "ROLE_STUDENT";
+			return "STUDENT";
 		} else if (user instanceof CanteenManager) {
-			return "ROLE_CANTEEN_MANAGER";
+			return "MANAGER";
 		} else {
 			throw new IllegalArgumentException("Invalid user type");
 		}

@@ -1,6 +1,5 @@
 package com.example.CanteenManagementSystem.dto.filter;
 
-
 import java.io.IOException;
 import java.util.Optional;
 
@@ -28,86 +27,51 @@ import jakarta.servlet.http.HttpServletResponse;
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
 
-  @Autowired
-    private JwtService jwtService;
+	@Autowired
+	private JwtService jwtService;
 
-    @Autowired
-    private UserInfoUserDetailsService userDetailsService;
+	@Autowired
+	private UserInfoUserDetailsService userDetailsService;
 
-    @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String authHeader = request.getHeader("Authorization");
-        String token = null;
-        String username = null;
-        System.out.println(authHeader);
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            token = authHeader.substring(7);
-            username = jwtService.extractUsername(token);
-        }
+	@Override
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+			throws ServletException, IOException {
+		String authHeader = request.getHeader("Authorization");
+		String token = null;
+		String username = null;
+		System.out.println(authHeader);
+		if (authHeader != null && authHeader.startsWith("Bearer ")) {
+			token = authHeader.substring(7);
+			username = jwtService.extractUsername(token);
+		}
 
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-            if (jwtService.validateToken(token, userDetails)) {
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authToken);
-            }
-        }
-        filterChain.doFilter(request, response);
-    }
-   																	//working
+		if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+			UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+			if (jwtService.validateToken(token, userDetails)) {
+				UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails,
+						null, userDetails.getAuthorities());
+				authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+				SecurityContextHolder.getContext().setAuthentication(authToken);
+			}
+		}
+		filterChain.doFilter(request, response);
+	}
 
-//
-//@Autowired
-//private StudentFormRepo studentRepository;
-//
-//@Autowired
-//private CanteenManagerRepo canteenManagerRepository;
-//
-//
-//@Autowired
-//private JwtService jwtService;
-//@Autowired
-//private UserInfoUserDetailsService userDetailsService;
-//@Override
-//protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-//    String authHeader = request.getHeader("Authorization");
-//    String token = null;
-//    System.out.println(authHeader);
-//    if (authHeader != null && authHeader.startsWith("Bearer ")) {
-//        token = authHeader.substring(7);
-//        String username = jwtService.extractUsername(token);
-//        
-//        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-//            Optional<StudentForm> student = studentRepository.findByEmail(username);
-//            Optional<CanteenManager> canteenManager = canteenManagerRepository.findByEmail(username);
-//
-//            if (student.isPresent()) {
-//                authenticateUser(student.get(), token, request);
-//            } else if (canteenManager.isPresent()) {
-//                authenticateUser(canteenManager.get(), token, request);
-//            }
-//        }
-//    }
-//    filterChain.doFilter(request, response);
-//}
+	private void authenticateUser(Object user, String token, HttpServletRequest request) {
+		UserDetails userDetails;
+		if (user instanceof StudentForm) {
+			userDetails = userDetailsService.loadUserByUsername(((StudentForm) user).getEmail());
+		} else if (user instanceof CanteenManager) {
+			userDetails = userDetailsService.loadUserByUsername(((CanteenManager) user).getEmail());
+		} else {
+			throw new IllegalArgumentException("Unsupported user type: " + user.getClass().getName());
+		}
 
-private void authenticateUser(Object user, String token, HttpServletRequest request) {
-    UserDetails userDetails;
-    if (user instanceof StudentForm) {
-        userDetails = userDetailsService.loadUserByUsername(((StudentForm) user).getEmail());
-    } else if (user instanceof CanteenManager) {
-        userDetails = userDetailsService.loadUserByUsername(((CanteenManager) user).getEmail());
-    } else {
-        throw new IllegalArgumentException("Unsupported user type: " + user.getClass().getName());
-    }
-
-    if (jwtService.validateToken(token, userDetails)) {
-        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-        authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-        SecurityContextHolder.getContext().setAuthentication(authToken);
-    }
+		if (jwtService.validateToken(token, userDetails)) {
+			UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null,
+					userDetails.getAuthorities());
+			authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+			SecurityContextHolder.getContext().setAuthentication(authToken);
+		}
+	}
 }
-}
-
-

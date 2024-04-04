@@ -46,7 +46,7 @@ public class StudentForm implements Serializable{
 	private byte[] imageData;
 	
 //	@JsonIgnore
-	@OneToMany(mappedBy = "studentForm")
+	@OneToMany(mappedBy = "studentForm", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PurchaseOrder> purchaseOrders;
 
 	public StudentForm(int student_id, long rfid_Number, String first_name, String last_name, String department,

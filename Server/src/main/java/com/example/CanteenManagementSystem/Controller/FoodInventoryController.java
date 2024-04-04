@@ -28,9 +28,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.CanteenManagementSystem.model.FoodInventory;
 import com.example.CanteenManagementSystem.model.NotFoundException;
+import com.example.CanteenManagementSystem.model.PurchaseOrder;
 import com.example.CanteenManagementSystem.model.StudentForm;
 import com.example.CanteenManagementSystem.model.StudentFormResponse;
 import com.example.CanteenManagementSystem.repository.FoodInventoryRepo;
+import com.example.CanteenManagementSystem.repository.PurchaseOrderRepo;
 import com.example.CanteenManagementSystem.service.FoodInventoryService;
 
 @ControllerAdvice
@@ -45,7 +47,7 @@ public class FoodInventoryController {
 	@GetMapping
 	public ResponseEntity<List<FoodInventory>> getAllFoods() throws Exception {
 		List<FoodInventory> foods = foodInventoryService.getAllFoods();
-		System.out.println(foods.size()+"   size");
+		System.out.println(foods.size() + "   size");
 		for (FoodInventory food : foods) {
 			Blob photoBytes = foodInventoryService.getFoodPhotoByFoodId(food.getFood_id());
 
@@ -113,120 +115,90 @@ public class FoodInventoryController {
 		}
 	}
 
-	@DeleteMapping("/{id}")
+	/*@DeleteMapping("/{id}")
 	public ResponseEntity<String> deleteFood(@PathVariable int id) {
 		foodInventoryService.deleteFood(id);
 		return ResponseEntity.ok("Food with ID " + id + " has been deleted.");
-	}
-
-	/*@PutMapping("/{id}")
-	public ResponseEntity<?> updateFood(@PathVariable int id,
-			@RequestParam(value = "file", required = false) MultipartFile file, @RequestParam("name") String name,
-			@RequestParam("amount") int amount, @RequestParam("isAvailability") boolean isAvailability,
-			@RequestParam("breakfast") boolean breakfast, @RequestParam("lunch") boolean lunch,
-			@RequestParam("eveningfood") boolean eveningfood, @RequestParam("dinner") boolean dinner,
-			@RequestParam("alltime") boolean alltime, @RequestParam("quantity") int quantity) throws SerialException {
-		try {
-			Optional<FoodInventory> optionalFood = Optional.ofNullable(foodInventoryService.getFoodById(id));
-			if (optionalFood.isPresent()) {
-				FoodInventory food = optionalFood.get();
-				if (file != null && !file.isEmpty()) {
-					Blob photoBlob = new SerialBlob(file.getBytes());
-					food.setPhoto(photoBlob);
-					String base64Image = Base64.encodeBase64String(photoBlob.getBytes(1, (int) photoBlob.length()));
-
-					food.setPhotoBase64(base64Image);
-
-				}
-				food.setName(name);
-				food.setAmount(amount);
-				food.setAvailability(isAvailability);
-				food.setBreakfast(breakfast);
-				food.setLunch(lunch);
-				food.setEveningfood(eveningfood);
-				food.setDinner(dinner);
-				food.setAlltime(alltime);
-				food.setQuantity(quantity);
-				foodInventoryService.updateFood(food, file);
-				return ResponseEntity.ok(food);
-			} else {
-				return ResponseEntity.notFound().build();
-			}
-		} catch (IOException | SQLException e) {
-			e.printStackTrace();
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-		} catch (NullPointerException e) {
-			e.printStackTrace();
-			return ResponseEntity.badRequest().body("File parameter is null.");
-		}
 	}*/
 	
 	
 	@Autowired
-	FoodInventoryRepo foodInventoryRepo;
+	FoodInventoryRepo foodInventoryRepository;
 	
-	@PutMapping("/{id}")
-	public ResponseEntity<?> updateFood(@PathVariable int id,
-//	                                    @RequestParam(value = "file", required = false) MultipartFile file,
-	                                    @RequestParam(value = "name", required = false) String name,
-	                                    @RequestParam(value = "amount", required = false) Integer amount,
-	                                    @RequestParam(value = "isAvailability", required = false) Boolean isAvailability,
-	                                    @RequestParam(value = "breakfast", required = false) Boolean breakfast,
-	                                    @RequestParam(value = "lunch", required = false) Boolean lunch,
-	                                    @RequestParam(value = "eveningfood", required = false) Boolean eveningfood,
-	                                    @RequestParam(value = "dinner", required = false) Boolean dinner,
-	                                    @RequestParam(value = "alltime", required = false) Boolean alltime,
-	                                    @RequestParam(value = "quantity", required = false) Integer quantity) throws SQLException, IOException {
-	    try {
-	        Optional<FoodInventory> optionalFood = Optional.ofNullable(foodInventoryService.getFoodById(id));
-	        if (optionalFood.isPresent()) {
-	            FoodInventory food = optionalFood.get();
-
-//	            if (file != null && !file.isEmpty()) { 
-//	                Blob photoBlob = new SerialBlob(file.getBytes());
-//	                food.setPhoto(photoBlob);
-//	                String base64Image = Base64.encodeBase64String(photoBlob.getBytes(1, (int) photoBlob.length()));
-//	                food.setPhotoBase64(base64Image);
-//	            }
-
-	            if (name != null) {
-	                food.setName(name);
-	            }
-	            if (amount != null) {
-	                food.setAmount(amount);
-	            }
-	            if (isAvailability != null) {
-	                food.setAvailability(isAvailability);
-	            }
-	            if (breakfast != null) {
-	                food.setBreakfast(breakfast);
-	            }
-	            if (lunch != null) {
-	                food.setLunch(lunch);
-	            }
-	            if (eveningfood != null) {
-	                food.setEveningfood(eveningfood);
-	            }
-	            if (dinner != null) {
-	                food.setDinner(dinner);
-	            }
-	            if (alltime != null) {
-	                food.setAlltime(alltime);
-	            }
-	            if (quantity != null) {
-	                food.setQuantity(quantity);
-	            }
-
-	            foodInventoryRepo.save(food);
-	            return ResponseEntity.ok(food);
-	        } else {
-	            return ResponseEntity.notFound().build();
+	@Autowired
+	PurchaseOrderRepo purchaseOrderRepository;
+	
+	@DeleteMapping("/{id}")
+	public void deleteFoodInventory(@PathVariable int id) {
+	    Optional<FoodInventory> foodInventory = foodInventoryRepository.findById(id);
+	    if (foodInventory.isPresent()) {
+	    	FoodInventory food=foodInventory.get();
+	        List<PurchaseOrder> purchaseOrders = food.getPurchaseOrders();
+	        for (PurchaseOrder purchaseOrder : purchaseOrders) {
+	            purchaseOrderRepository.delete(purchaseOrder);
 	        }
-	    } catch (NullPointerException e) {
-	        e.printStackTrace();
-	        return ResponseEntity.badRequest().body("Error occurred while processing the request.");
+	        
+	        foodInventoryRepository.delete(food);
 	    }
 	}
 
+
+	@Autowired
+	FoodInventoryRepo foodInventoryRepo;
+
+	@PutMapping("/{id}")
+	public ResponseEntity<?> updateFood(@PathVariable int id,
+			@RequestParam(value = "name", required = false) String name,
+			@RequestParam(value = "amount", required = false) Integer amount,
+			@RequestParam(value = "isAvailability", required = false) Boolean isAvailability,
+			@RequestParam(value = "breakfast", required = false) Boolean breakfast,
+			@RequestParam(value = "lunch", required = false) Boolean lunch,
+			@RequestParam(value = "eveningfood", required = false) Boolean eveningfood,
+			@RequestParam(value = "dinner", required = false) Boolean dinner,
+			@RequestParam(value = "alltime", required = false) Boolean alltime,
+			@RequestParam(value = "quantity", required = false) Integer quantity) throws SQLException, IOException {
+		try {
+			Optional<FoodInventory> optionalFood = Optional.ofNullable(foodInventoryService.getFoodById(id));
+			if (optionalFood.isPresent()) {
+				FoodInventory food = optionalFood.get();
+
+				if (name != null) {
+					food.setName(name);
+				}
+				if (amount != null) {
+					food.setAmount(amount);
+				}
+				if (isAvailability != null) {
+					food.setAvailability(isAvailability);
+				}
+				if (breakfast != null) {
+					food.setBreakfast(breakfast);
+				}
+				if (lunch != null) {
+					food.setLunch(lunch);
+				}
+				if (eveningfood != null) {
+					food.setEveningfood(eveningfood);
+				}
+				if (dinner != null) {
+					food.setDinner(dinner);
+				}
+				if (alltime != null) {
+					food.setAlltime(alltime);
+				}
+				if (quantity != null) {
+					food.setQuantity(quantity);
+				}
+
+				foodInventoryRepo.save(food);
+				return ResponseEntity.ok(food);
+			} else {
+				return ResponseEntity.notFound().build();
+			}
+		} catch (NullPointerException e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body("Error occurred while processing the request.");
+		}
+	}
 
 }

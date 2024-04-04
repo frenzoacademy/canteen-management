@@ -63,9 +63,9 @@ public class StudentFormController {
 			response.setDate_Time(s.getDate_time());
 			response.setWallet(s.getWallet());
 			response.setPassword(s.getPassword());
-			
-			System.out.println(s.getPassword()+": password");
-			System.out.println(s.getWallet()+" wallet");
+
+			System.out.println(s.getPassword() + ": password");
+			System.out.println(s.getWallet() + " wallet");
 		}
 		System.out.println("---------------------" + response + "---------");
 		return new ResponseEntity<>(response, HttpStatus.OK);
@@ -94,14 +94,12 @@ public class StudentFormController {
 			@RequestParam("rfid_Number") long rfid_Number, @RequestParam("First_name") String First_name,
 			@RequestParam("Last_name") String Last_name, @RequestParam("department") String department,
 			@RequestParam("aadhar_number") String aadhar_number, @RequestParam("mob_number") long mob_number,
-			@RequestParam("address") String address,
-			@RequestParam("password") String password,
-			@RequestParam("email") String email,
-			@RequestParam("wallet") int wallet,
+			@RequestParam("address") String address, @RequestParam("password") String password,
+			@RequestParam("email") String email, @RequestParam("wallet") int wallet,
 			@RequestParam("date_time") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date_time)
 			throws IOException, SQLException {
 		StudentForm s = studentService.addStudent(file, rfid_Number, First_name, Last_name, department, aadhar_number,
-				mob_number, address,password, email, date_time,wallet);
+				mob_number, address, password, email, date_time, wallet);
 		return new ResponseEntity<StudentForm>(s, HttpStatus.CREATED);
 	}
 
@@ -114,15 +112,18 @@ public class StudentFormController {
 	@Autowired
 	StudentFormRepo studentFormRepo;
 
-	@PutMapping("/{id}")
+	/*@PutMapping("/{id}")
 	public ResponseEntity<StudentForm> updateStudentByField(@PathVariable int id,
-			@RequestParam("file") MultipartFile file, @RequestParam("rfid_Number") long rfid_Number,
-			@RequestParam("First_name") String First_name, @RequestParam("Last_name") String Last_name,
-			@RequestParam("department") String department, @RequestParam("aadhar_number") String aadhar_number,
-			@RequestParam("mob_number") long mob_number, @RequestParam("address") String address,
-			@RequestParam("password") String password,
-			@RequestParam("email") String email,
-			@RequestParam("date_time") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date_time)
+			@RequestParam(value="rfid_Number",required = false) long rfid_Number, 
+			@RequestParam(value="First_name",required = false) String First_name,
+			@RequestParam(value="Last_name",required = false) String Last_name,
+			@RequestParam(value="department",required = false) String department,
+			@RequestParam(value="aadhar_number",required = false) String aadhar_number, 
+			@RequestParam(value="mob_number",required = false) long mob_number,
+			@RequestParam(value="address",required = false) String address, 
+			@RequestParam(value="password",required = false) String password,
+			@RequestParam(value="email",required = false) String email,
+			@RequestParam(value="date_time",required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date_time)
 			throws SerialException, SQLException, IOException {
 		Optional<StudentForm> optionalStudent = studentFormRepo.findById(id);
 		if (!optionalStudent.isPresent()) {
@@ -131,7 +132,6 @@ public class StudentFormController {
 
 		StudentForm student = optionalStudent.get();
 
-		// Update student fields with request parameters
 		student.setRfid_Number(rfid_Number);
 		student.setFirst_name(First_name);
 		student.setLast_name(Last_name);
@@ -143,20 +143,72 @@ public class StudentFormController {
 		student.setEmail(email);
 		student.setDate_time(date_time);
 
-		if (!file.isEmpty()) {
-			System.out.println("File is not empty");
-			byte[] photoBytes = file.getBytes();
-			Blob photoBlob = new SerialBlob(photoBytes);
-			student.setImage(photoBlob);
-		}
-
 		try {
 			return ResponseEntity.ok(studentService.saveStudent(student));
 		} catch (Exception e) {
 			e.printStackTrace(); // Handle or log the exception appropriately
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
+	}*/
+	@PutMapping("/{id}")
+	public ResponseEntity<StudentForm> updateStudentByField(@PathVariable int id,
+	        @RequestParam(value="rfid_Number", required = false) Long rfid_Number, 
+	        @RequestParam(value="First_name", required = false) String First_name,
+	        @RequestParam(value="Last_name", required = false) String Last_name,
+	        @RequestParam(value="department", required = false) String department,
+	        @RequestParam(value="aadhar_number", required = false) String aadhar_number, 
+	        @RequestParam(value="mob_number", required = false) Long mob_number,
+	        @RequestParam(value="address", required = false) String address, 
+	        @RequestParam(value="password", required = false) String password,
+	        @RequestParam(value="email", required = false) String email,
+	        @RequestParam(value="date_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date_time)
+	        throws SerialException, SQLException, IOException {
+	    Optional<StudentForm> optionalStudent = studentFormRepo.findById(id);
+	    if (!optionalStudent.isPresent()) {
+	        return ResponseEntity.notFound().build();
+	    }
+
+	    StudentForm student = optionalStudent.get();
+
+	    if (rfid_Number != null) {
+	        student.setRfid_Number(rfid_Number);
+	    }
+	    if (First_name != null) {
+	        student.setFirst_name(First_name);
+	    }
+	    if (Last_name != null) {
+	        student.setLast_name(Last_name);
+	    }
+	    if (department != null) {
+	        student.setDepartment(department);
+	    }
+	    if (aadhar_number != null) {
+	        student.setAadhar_number(aadhar_number);
+	    }
+	    if (mob_number != null) {
+	        student.setMob_number(mob_number);
+	    }
+	    if (address != null) {
+	        student.setAddress(address);
+	    }
+	    if (password != null) {
+	        student.setPassword(password);
+	    }
+	    if (email != null) {
+	        student.setEmail(email);
+	    }
+	    if (date_time != null) {
+	        student.setDate_time(date_time);
+	    }
+
+	    try {
+	        return ResponseEntity.ok(studentService.saveStudent(student));
+	    } catch (Exception e) {
+	        e.printStackTrace(); // Handle or log the exception appropriately
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	    }
 	}
+
 
 	private StudentFormResponse getStudentFormResponse(StudentForm room) {
 		byte[] photoBytes = null;
