@@ -5,9 +5,6 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 const OthersLoginForm = () => {
-  const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl");
-
   const [error, setError] = useState("");
   const {
     register,
@@ -28,7 +25,6 @@ const OthersLoginForm = () => {
         redirect: false,
         email,
         password,
-        callbackUrl: callbackUrl || "/",
       });
       const { ok, error, url } = response;
       if (!ok && error === "CredentialsSignin") {

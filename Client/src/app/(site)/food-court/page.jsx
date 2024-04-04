@@ -1,13 +1,24 @@
 "use client";
 import FoodCard from "@/components/FoodCard";
-import FoodCourtScanner from "@/components/FoodCourtScanner";
 import { useGetFoodInventories } from "@/features/foodInventory/foodInventory.hooks";
 import { useAddPurchaseOrder } from "@/features/purchase-order/purchaseOrder.hooks";
 import { useGetStudents } from "@/features/students/students.hooks";
 import { ArrowRightIcon } from "@heroicons/react/24/outline";
+import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
+const FoodCourtScanner = dynamic(
+  () => {
+    return import("@/components/FoodCourtScanner");
+  },
+  {
+    ssr: false,
+  }
+);
+
 const Page = () => {
+  const route = useRouter();
   const [cart, setCart] = useState([]);
   const [rfid, setRfid] = useState(null);
   const [scannedStudent, setScannedStudent] = useState(null);
@@ -31,10 +42,9 @@ const Page = () => {
     mutate(cart);
   };
 
-  // if (isSuccess) {
-  //   setScannedStudent(null);
-  //   setCart([]);
-  // }
+  if (isSuccess) {
+    route.push(`/food-court`);
+  }
 
   const addToCartHandler = (item) => {
     console.log({ item });
