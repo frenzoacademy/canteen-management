@@ -40,7 +40,6 @@ const foods = [
 
 const Page = () => {
   const { data } = useGetFoodInventories();
-  console.log(data);
   // const { user } = await auth();
   // const {
   //   data: { user },

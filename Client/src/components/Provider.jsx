@@ -4,11 +4,11 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { SessionProvider } from "next-auth/react";
 import { useState } from "react";
 
-const Provider = ({ children }) => {
+const Provider = ({ children, session }) => {
   const [queryClient] = useState(() => new QueryClient());
   return (
     <QueryClientProvider client={queryClient}>
-      <SessionProvider>
+      <SessionProvider session={session}>
         {children}
         <ReactQueryDevtools initialIsOpen={false} />
       </SessionProvider>

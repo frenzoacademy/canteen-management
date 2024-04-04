@@ -1,11 +1,15 @@
 "use client";
 import { signIn } from "next-auth/react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 const OthersLoginForm = () => {
+  const router = useRouter();
   const [error, setError] = useState("");
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl");
+
   const {
     register,
     handleSubmit,
@@ -25,6 +29,7 @@ const OthersLoginForm = () => {
         redirect: false,
         email,
         password,
+        callbackUrl: callbackUrl || "/",
       });
       const { ok, error, url } = response;
       if (!ok && error === "CredentialsSignin") {

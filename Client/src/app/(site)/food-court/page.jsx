@@ -47,7 +47,6 @@ const Page = () => {
   }
 
   const addToCartHandler = (item) => {
-    console.log({ item });
     const itemAmount = parseInt(item.totalAmount);
     const itemQuantity = parseInt(item.quantity);
 

@@ -31,7 +31,6 @@ const transactions = [
 
 const Page = () => {
   const { data } = useGetPurchaseOrders();
-  console.log(data);
 
   return (
     <div>

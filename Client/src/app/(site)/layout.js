@@ -2,6 +2,8 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import DesktopSidebar from "@/components/DesktopSidebar";
 import Provider from "@/components/Provider";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -11,10 +13,12 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
+  const session = getServerSession(authOptions);
+
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Provider>
+        <Provider session={session}>
           <div className="flex">
             <div>
               <DesktopSidebar />
