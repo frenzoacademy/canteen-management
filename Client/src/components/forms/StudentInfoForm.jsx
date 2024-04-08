@@ -55,6 +55,7 @@ const StudentInfoForm = ({ editId }) => {
       setValue("mob_number", data.mob_number || "");
       setValue("rfid_Number", data.rfid_Number || "");
       setValue("email", data.email || "");
+      setValue("password", data.password || "");
       setValue("wallet", data.wallet || 0);
     }
   }, [data, editId]);

@@ -12,7 +12,6 @@ const Page = () => {
   const route = useRouter();
   const { data } = useGetFoodInventories();
   const { mutate: removeFoods } = useRemoveFoodInventory();
-  console.log(data);
 
   return (
     <div>
