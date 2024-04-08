@@ -66,7 +66,7 @@ public class CanteenManagerService {
 		manager.setAadhar_number(aadhar_number);
 		manager.setPassword(password);
 		manager.setMob_number(mob_number);
-
+		manager.setRole("MANAGER");
 		if (image != null && !image.isEmpty()) {
 			byte[] photoBytes = image.getBytes();
 			Blob photoBlob = new SerialBlob(photoBytes);

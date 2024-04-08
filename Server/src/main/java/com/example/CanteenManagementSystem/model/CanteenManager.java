@@ -27,8 +27,9 @@ public class CanteenManager implements Serializable{
 	private long aadhar_number;
 	private String password;
 	private long mob_number;
-
-	 @Lob
+	private String role;
+	
+	@Lob
 	 private String formJson;
 	
 	@Lob
@@ -94,6 +95,14 @@ public class CanteenManager implements Serializable{
 
 	public int getId() {
 		return id;
+	}
+
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
 	}
 
 	public void setId(int id) {

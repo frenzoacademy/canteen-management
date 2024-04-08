@@ -12,6 +12,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,6 +25,7 @@ import com.example.CanteenManagementSystem.repository.StudentFormRepo;
 import com.example.CanteenManagementSystem.service.JwtService;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
 public class LoginController {
 
 	@Autowired
@@ -85,7 +87,12 @@ public class LoginController {
 			System.out.println("Student   :");
 			return "STUDENT";
 		} else if (user instanceof CanteenManager) {
-			return "MANAGER";
+			 CanteenManager manager = (CanteenManager) user;
+		        if(manager.getRole().equals("MANAGER")) {
+		            return "MANAGER";
+		        } else {
+		            return "ADMIN";
+		        }
 		} else {
 			throw new IllegalArgumentException("Invalid user type");
 		}
