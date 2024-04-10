@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 
 const FoodCard = ({
@@ -9,6 +9,7 @@ const FoodCard = ({
   amount,
   addToCartHandler,
   disabled,
+  isSuccess,
 }) => {
   const [quantity, setQuantity] = useState(1);
   const [showAddToCart, setShowAddToCart] = useState(true);
@@ -53,6 +54,12 @@ const FoodCard = ({
     });
   };
 
+  useEffect(() => {
+    if (isSuccess) {
+      setShowAddToCart(true);
+    }
+  }, [isSuccess]);
+
   return (
     <div className="max-w-xs rounded overflow-hidden shadow-lg">
       <div className="flex justify-center items-center border h-[200px] w-[200px]">
@@ -65,7 +72,7 @@ const FoodCard = ({
       </div>
       <div className="px-6 py-4">
         <div className="font-bold text-xl mb-2">{name}</div>
-        <p className="text-gray-700 text-base">$ {amount}</p>
+        <p className="text-gray-700 text-base">₹ {amount}</p>
         <div className="flex justify-between mt-4">
           {showAddToCart ? (
             <button
