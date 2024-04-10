@@ -26,9 +26,9 @@ const DesktopSidebar = () => {
   const { data: studentData } = useGetStudent(userId);
 
   useEffect(() => {
-    if (role === "ROLE_CANTEEN_MANAGER") {
+    if (role === "MANAGER") {
       setUserData(canteenUserData);
-    } else if (role === "ROLE_STUDENT") {
+    } else if (role === "STUDENT") {
       setUserData(studentData);
     }
   }, [role, canteenUserData, studentData]);
@@ -36,7 +36,7 @@ const DesktopSidebar = () => {
   const [navigation, setNavigation] = useState([]);
 
   useEffect(() => {
-    if (role === "ROLE_CANTEEN_MANAGER") {
+    if (role === "MANAGER") {
       setNavigation([
         {
           name: "Food Inventory",
@@ -59,7 +59,7 @@ const DesktopSidebar = () => {
           icon: transaction,
         },
       ]);
-    } else if (role === "ROLE_STUDENT") {
+    } else if (role === "STUDENT") {
       setNavigation([
         {
           name: "Transactions",

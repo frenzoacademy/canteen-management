@@ -109,7 +109,7 @@ const Page = () => {
             Wallet Amount <ArrowRightIcon className="h-5 w-5" />
           </h1>
         </div>
-        <h1 className="font-black text-2xl">$ {walletAmount}</h1>
+        <h1 className="font-black text-2xl">₹ {walletAmount}</h1>
       </div>
       <div className="flex gap-5 flex-wrap mt-10">
         {data?.map((food, index) => (

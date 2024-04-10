@@ -26,7 +26,7 @@ const FoodMenuCard = ({ image, name, amount, id, quantity }) => {
       </div>
       <div className="px-6 py-4">
         <div className="font-bold text-xl mb-2">{name}</div>
-        <p className="text-gray-700 text-base">$ {amount}</p>
+        <p className="text-gray-700 text-base">₹ {amount}</p>
         <p className="text-gray-400 text-sm mt-2">Quantity : {quantity}</p>
         <div className="flex justify-between mt-4">
           <div className="flex">

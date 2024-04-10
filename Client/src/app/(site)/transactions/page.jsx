@@ -9,7 +9,7 @@ const transactions = [
     category: "Subscription",
     date: "Jul 21, 2023",
     status: "Pending",
-    amount: "$10.00",
+    amount: "₹ 10.00",
   },
   {
     RFID: "165441582",
@@ -17,7 +17,7 @@ const transactions = [
     category: "Subscription",
     date: "Jul 21, 2023",
     status: "In progress",
-    amount: "$5.00",
+    amount: "₹ 5.00",
   },
   {
     RFID: "165441946",
@@ -25,7 +25,7 @@ const transactions = [
     category: "Car",
     date: "Jul 20, 2023",
     status: "Success",
-    amount: "$346.78",
+    amount: "₹ 346.78",
   },
 ];
 
