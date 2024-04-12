@@ -29,7 +29,7 @@ const OthersLoginForm = () => {
         redirect: false,
         email,
         password,
-        callbackUrl: callbackUrl || "/",
+        callbackUrl: "http://139.84.143.125:3000/",
       });
       const { ok, error, url } = response;
       if (!ok && error === "CredentialsSignin") {

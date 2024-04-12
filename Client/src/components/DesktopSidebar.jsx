@@ -24,9 +24,8 @@ const DesktopSidebar = () => {
   const role = session?.data?.user?.role;
   const { data: canteenUserData } = useGetCanteenUser(userId);
   const { data: studentData } = useGetStudent(userId);
-
   useEffect(() => {
-    if (role === "MANAGER") {
+    if (role === "MANAGER" || role === "ADMIN") {
       setUserData(canteenUserData);
     } else if (role === "STUDENT") {
       setUserData(studentData);
@@ -99,12 +98,14 @@ const DesktopSidebar = () => {
         />
         <div className="text-white hidden sm:block">
           <h1 className="font-medium text-lg">
-            {canteenUserData
-              ? canteenUserData.first_name
-              : studentData?.First_name}
+            {canteenUserData && (role == "MANAGER" || role == "ADMIN")
+              ? userData?.first_name
+              : userData?.First_name}
           </h1>
           <h1 className="font-normal text-sm">
-            {canteenUserData ? canteenUserData.email : studentData?.email}
+            {canteenUserData && role == "MANAGER"
+              ? userData?.email
+              : userData?.email}
           </h1>
         </div>
       </div>
@@ -132,7 +133,9 @@ const DesktopSidebar = () => {
           {session?.data?.user || userId ? (
             <button
               onClick={() => {
-                signOut();
+                signOut({
+                  callbackUrl: "http://139.84.143.125:3000/login",
+                });
               }}
               className="flex items-center text-white gap-4 bg-red-600 w-full sm:px-5 sm:py-3 p-3 rounded-xl"
             >

@@ -1,40 +1,21 @@
 "use client";
 import WalletBalance from "@/components/WalletBalance";
 import { useGetPurchaseOrders } from "@/features/purchase-order/purchaseOrder.hooks";
-
-const transactions = [
-  {
-    RFID: "165441313",
-    products: "3",
-    category: "Subscription",
-    date: "Jul 21, 2023",
-    status: "Pending",
-    amount: "₹ 10.00",
-  },
-  {
-    RFID: "165441582",
-    products: "8",
-    category: "Subscription",
-    date: "Jul 21, 2023",
-    status: "In progress",
-    amount: "₹ 5.00",
-  },
-  {
-    RFID: "165441946",
-    products: "10",
-    category: "Car",
-    date: "Jul 20, 2023",
-    status: "Success",
-    amount: "₹ 346.78",
-  },
-];
+import { format } from "date-fns";
 
 const Page = () => {
   const { data } = useGetPurchaseOrders();
+  console.log(data);
+  let currentDate = format(new Date(), "MMMM do yyyy");
+  const totalAmount = data?.reduce(
+    (total, order) => total + order.totalAmount,
+    0
+  );
+  console.log(totalAmount);
 
   return (
     <div>
-      <WalletBalance />
+      <WalletBalance amount={totalAmount} />
       <div className="mt-10">
         <div className="w-full overflow-auto text-slate-400 bg-black  rounded-lg ">
           <table className="w-full table-auto">
@@ -48,17 +29,21 @@ const Page = () => {
               </tr>
             </thead>
             <tbody>
-              {transactions.map((transaction, index) => (
+              {data?.map((transaction, index) => (
                 <tr
                   key={index}
                   className="hover:bg-slate-900  hover:bg-opacity-95 border-b-[1px] border-b-slate-700"
                 >
-                  <td className="px-3 py-4">{transaction.RFID}</td>
-                  <td className="px-3 py-4">{transaction.products} Items</td>
-                  <td className="px-3 py-4">{transaction.date}</td>
+                  <td className="px-3 py-4">
+                    {transaction?.studentForm.rfid_Number}
+                  </td>
+                  <td className="px-3 py-4">
+                    {transaction.foodItems?.length} Items
+                  </td>
+                  <td className="px-3 py-4">{currentDate}</td>
                   <td className="px-3 py-4">{transaction.status}</td>
                   <td className="px-3 py-4 text-red-600">
-                    - {transaction.amount}
+                    - ₹{transaction.totalAmount}
                   </td>
                 </tr>
               ))}

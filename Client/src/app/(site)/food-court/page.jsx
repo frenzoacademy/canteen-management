@@ -40,7 +40,9 @@ const Page = () => {
   };
   const handlePurchase = () => {
     mutate({
-      student_id: scannedStudent?.student_id,
+      studentForm: {
+        student_id: scannedStudent?.student_id,
+      },
       status: "success",
       date: new Date(),
       foodItems: cart,
