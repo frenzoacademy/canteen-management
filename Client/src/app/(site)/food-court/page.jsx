@@ -39,12 +39,29 @@ const Page = () => {
     setRfid(id);
   };
   const handlePurchase = () => {
-    mutate(cart);
+    mutate({
+      studentForm: {
+        student_id: scannedStudent?.student_id,
+      },
+      status: "success",
+      date: new Date(),
+      foodItems: cart,
+    });
   };
 
-  if (isSuccess) {
-    route.push(`/food-court`);
-  }
+  useEffect(() => {
+    const resetStates = () => {
+      setCart([]);
+      setRfid(null);
+      setScannedStudent(null);
+      setWalletAmount(0);
+    };
+
+    if (isSuccess) {
+      resetStates();
+      route.push(`/food-court`);
+    }
+  }, [isSuccess]);
 
   const addToCartHandler = (item) => {
     const itemAmount = parseInt(item.totalAmount);
@@ -85,11 +102,6 @@ const Page = () => {
         if (item.quantity > 0) {
           const newItem = {
             ...item,
-            studentForm: {
-              student_id: scannedStudent?.student_id,
-            },
-            status: "success",
-            date: new Date(),
           };
           setCart([...cart, newItem]);
         }
@@ -109,7 +121,7 @@ const Page = () => {
             Wallet Amount <ArrowRightIcon className="h-5 w-5" />
           </h1>
         </div>
-        <h1 className="font-black text-2xl">$ {walletAmount}</h1>
+        <h1 className="font-black text-2xl">₹ {walletAmount}</h1>
       </div>
       <div className="flex gap-5 flex-wrap mt-10">
         {data?.map((food, index) => (
@@ -121,6 +133,7 @@ const Page = () => {
             image={food?.photoBase64}
             addToCartHandler={addToCartHandler}
             disabled={food?.amount > walletAmount}
+            isSuccess={isSuccess}
           />
         ))}
       </div>

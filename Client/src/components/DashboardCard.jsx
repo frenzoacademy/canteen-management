@@ -8,7 +8,7 @@ import {
 const stats = [
   {
     title: "Total Sales",
-    count: "$ 8000",
+    count: "₹ 8000",
     icon: CurrencyDollarIcon,
     color: "blue",
   },

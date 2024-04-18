@@ -19,9 +19,9 @@ const requestInterceptor = async (config) => {
 
   const session = await getSession();
   if (session?.user) {
-    config.headers.set("Authorization", session?.user?.accessToken);
+    config.headers.set("Authorization", session?.user?.token);
   } else if (token) {
-    config.headers.set("Authorization", token?.user?.accessToken);
+    config.headers.set("Authorization", token?.user?.token);
   }
   // const token = getItem();
   // if (token) {
