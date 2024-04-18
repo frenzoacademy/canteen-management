@@ -1,5 +1,6 @@
 package com.example.CanteenManagementSystem.Controller;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -7,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.auditing.CurrentDateTimeProvider;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,68 +49,67 @@ public class PurchaseOrderController {
 	@Autowired
 	StudentFormRepo studentRepo;
 
+	
 	@PostMapping
-	@Transactional
-	public List<PurchaseOrder> addOrders(@RequestBody List<PurchaseOrder> newOrders) {
-		List<PurchaseOrder> savedOrders = new ArrayList<>();
-		System.out.println("newOrders---" + newOrders.size());
+    @Transactional
+    public ResponseEntity<String> addPurchaseOrder(@RequestBody PurchaseOrder request) {
+        try {
+            Optional<StudentForm> studentOptional = studentRepo.findById(request.getStudentForm().getStudent_id());
+            if (studentOptional.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Student not found");
+            }
+            StudentForm student = studentOptional.get();
 
-		for (PurchaseOrder newOrder : newOrders) {
-			// Retrieve the StudentForm associated with the PurchaseOrder
-			Optional<StudentForm> studentOptional = studentRepo.findById(newOrder.getStudentForm().getStudent_id());
+            int totalAmount = 0;
+            for (FoodInventory foodItem : request.getFoodItems()) {
+                Optional<FoodInventory> foodOptional = foodInventoryRepository.findByFoodId(foodItem.getFood_id());
+                if (foodOptional.isPresent()) {
+                    totalAmount += foodOptional.get().getAmount() * foodItem.getQuantity();
+                } else {
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Food item not found");
+                }
+            }
 
-			if (studentOptional.isPresent()) {
-				StudentForm student = studentOptional.get();
+            if (student.getWallet() < totalAmount) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Insufficient balance");
+            }
 
-				int currentBalance = student.getWallet();
-				int bill = newOrder.getTotalAmount();
-				System.out.println(student.getWallet() + "prev wallet-------");
-				System.out.println(newOrder.getTotalAmount() + "current amount-------");
-				System.out.println(currentBalance - bill);
-				System.out.println("current available wallet");
+            PurchaseOrder purchaseOrder = new PurchaseOrder();
+            purchaseOrder.setStudentForm(student);
+            purchaseOrder.setTotalAmount(totalAmount);
+            purchaseOrder.setStatus(request.getStatus());
+            LocalDateTime date_time;
 
-				if (currentBalance >= bill) {
-					student.setWallet(currentBalance - bill);
-					studentRepo.save(student);
-					newOrder.setStudentForm(student);
-				} else {
-					throw new IllegalArgumentException(
-							"Insufficient balance for student with ID: " + student.getStudent_id());
-				}
-			} else {
-				throw new IllegalArgumentException(
-						"Student not found with ID: " + newOrder.getStudentForm().getStudent_id());
-			}
+            purchaseOrder.setDate_time(LocalDateTime.now().toLocalDate());
 
-			// Retrieve the FoodInventory associated with the PurchaseOrder
-			Optional<FoodInventory> foodData = foodInventoryRepository.findByFoodId(newOrder.getFood_id());
+            
+            List<FoodInventory> foodItems = new ArrayList<>();
+            for (FoodInventory foodItem : request.getFoodItems()) {
+                Optional<FoodInventory> foodOptional = foodInventoryRepository.findByFoodId(foodItem.getFood_id());
+                if (foodOptional.isPresent()) {
+                    FoodInventory foodInventory = foodOptional.get();
+                    if (foodInventory.getQuantity() < foodItem.getQuantity()) {
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Insufficient quantity for food item");
+                    }
+                    student.setWallet(student.getWallet() - totalAmount);
+                    foodInventory.setQuantity(foodInventory.getQuantity() - foodItem.getQuantity());
+                    foodItems.add(foodInventory);
+                } else {
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Food item not found");
+                }
+            }
+            purchaseOrder.setFoodItems(foodItems);
 
-			if (foodData.isPresent()) {
-				FoodInventory foodInventory = foodData.get();
-				System.out.println("Before Update :" + foodInventory.getQuantity());
+            purchaseOrderRepository.save(purchaseOrder);
 
-				int prevQuantity = foodInventory.getQuantity();
-				int newQuantity = (int) newOrder.getQuantity();
+            studentRepo.save(student);
 
-				if (prevQuantity >= newQuantity) {
-					foodInventory.setQuantity(prevQuantity - newQuantity);
-					foodInventory = foodInventoryRepository.save(foodInventory); // Update the existing record
-					System.out.println("After Update :" + foodInventory.getQuantity());
-					newOrder.setFoodItems(Arrays.asList(foodInventory)); // Set the food items in PurchaseOrder
-				} else {
-					throw new IllegalArgumentException(
-							"Insufficient Quantity for food with ID: " + foodData.get().getFood_id());
-				}
-			}
-
-			System.out.println("foodItems :" + foodData);
-			System.out.println(newOrder.getStudentForm().getWallet() + "============");
-
-			savedOrders.add(purchaseOrderRepository.save(newOrder));
-		}
-
-		return savedOrders;
-	}
+            return ResponseEntity.status(HttpStatus.CREATED).body("Purchase order created successfully");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error processing request");
+        }
+    }
 
 	@Autowired
 	FoodInventoryService foodInventoryService;

@@ -3,6 +3,7 @@ package com.example.CanteenManagementSystem.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.*;
 
@@ -44,8 +45,7 @@ public class StudentForm implements Serializable{
 
 	@JsonIgnore // Ignore imageData during serialization
 	private byte[] imageData;
-	
-//	@JsonIgnore
+	@JsonIgnore
 	@OneToMany(mappedBy = "studentForm", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PurchaseOrder> purchaseOrders;
 
@@ -73,7 +73,7 @@ public class StudentForm implements Serializable{
 	public StudentForm() {
 		super();
 	}
-
+	@JsonProperty("student_id") 
 	public int getStudent_id() {
 		return student_id;
 	}

@@ -10,7 +10,7 @@ public interface PurchaseOrderRepo  extends JpaRepository<PurchaseOrder, Integer
 
 	List<PurchaseOrder> findAll();
 
-	PurchaseOrder save(PurchaseOrder order);
+	PurchaseOrder save(List<PurchaseOrder> savedOrders);
 
 	void deleteById(int id);
 

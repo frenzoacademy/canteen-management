@@ -115,33 +115,25 @@ public class FoodInventoryController {
 		}
 	}
 
-	/*@DeleteMapping("/{id}")
-	public ResponseEntity<String> deleteFood(@PathVariable int id) {
-		foodInventoryService.deleteFood(id);
-		return ResponseEntity.ok("Food with ID " + id + " has been deleted.");
-	}*/
-	
-	
 	@Autowired
 	FoodInventoryRepo foodInventoryRepository;
-	
+
 	@Autowired
 	PurchaseOrderRepo purchaseOrderRepository;
-	
+
 	@DeleteMapping("/{id}")
 	public void deleteFoodInventory(@PathVariable int id) {
-	    Optional<FoodInventory> foodInventory = foodInventoryRepository.findById(id);
-	    if (foodInventory.isPresent()) {
-	    	FoodInventory food=foodInventory.get();
-	        List<PurchaseOrder> purchaseOrders = food.getPurchaseOrders();
-	        for (PurchaseOrder purchaseOrder : purchaseOrders) {
-	            purchaseOrderRepository.delete(purchaseOrder);
-	        }
-	        
-	        foodInventoryRepository.delete(food);
-	    }
-	}
+		Optional<FoodInventory> foodInventory = foodInventoryRepository.findById(id);
+		if (foodInventory.isPresent()) {
+			FoodInventory food = foodInventory.get();
+			List<PurchaseOrder> purchaseOrders = food.getPurchaseOrders();
+			for (PurchaseOrder purchaseOrder : purchaseOrders) {
+				purchaseOrderRepository.delete(purchaseOrder);
+			}
 
+			foodInventoryRepository.delete(food);
+		}
+	}
 
 	@Autowired
 	FoodInventoryRepo foodInventoryRepo;

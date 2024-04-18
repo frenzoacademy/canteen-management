@@ -125,13 +125,17 @@ package com.example.CanteenManagementSystem.model;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 public class PurchaseOrder {
@@ -141,12 +145,12 @@ public class PurchaseOrder {
     private int order_id;
     private float quantity;
     private int totalAmount;
-    private Date date_time;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "UTC")
+    private LocalDate date_time;
     private String status;
     private int food_id;
-
     @ManyToOne
-    @JoinColumn(name = "student_id") 
+    @JoinColumn(name = "student_id")
     private StudentForm studentForm;
 
     @ManyToMany
@@ -156,7 +160,6 @@ public class PurchaseOrder {
     private List<FoodInventory> foodItems;
 
     
-//    @JsonIgnore
     public StudentForm getStudentForm() {
         return studentForm;
     }
@@ -166,7 +169,7 @@ public class PurchaseOrder {
         this.foodItems = new ArrayList<>(); // Initialize foodItems with an empty list
 	}
 
-	public PurchaseOrder(int order_id, float quantity, int totalAmount, Date date_time, String status, List<FoodInventory> foodItems) {
+	public PurchaseOrder(int order_id, float quantity, int totalAmount, LocalDate date_time, String status, List<FoodInventory> foodItems) {
         this.order_id = order_id;
         this.quantity = quantity;
         this.totalAmount = totalAmount;
@@ -176,7 +179,7 @@ public class PurchaseOrder {
     }
 	
 
-    public PurchaseOrder(int order_id, float quantity, int totalAmount, Date date_time, String status,
+    public PurchaseOrder(int order_id, float quantity, int totalAmount, LocalDate date_time, String status,
 			StudentForm studentForm, List<FoodInventory> foodItems) {
 		super();
 		this.order_id = order_id;
@@ -212,11 +215,11 @@ public class PurchaseOrder {
         this.totalAmount = totalAmount;
     }
 
-    public Date getDate_time() {
+    public LocalDate getDate_time() {
         return date_time;
     }
 
-    public void setDate_time(Date date_time) {
+    public void setDate_time(LocalDate date_time) {
         this.date_time = date_time;
     }
 
@@ -249,11 +252,7 @@ public class PurchaseOrder {
 		this.food_id = food_id;
 	}
 
-//	@Override
-//	public String toString() {
-//		return "PurchaseOrder [order_id=" + order_id + ", quantity=" + quantity + ", totalAmount=" + totalAmount
-//				+ ", date_time=" + date_time + ", status=" + status + ", studentForm=" + studentForm + ", foodItems="
-//				+ foodItems + "]";
-//	}
-    
+	
+	
+
 }

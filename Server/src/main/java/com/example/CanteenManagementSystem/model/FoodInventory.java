@@ -57,7 +57,6 @@ public class FoodInventory {
 
 	@ManyToOne
 	@JoinColumn(name = "canteenManager_id") // Assuming the foreign key column name
-//    @JsonBackReference // Mark as "back" side of relationship
 	private CanteenManager canteenManager;
 
 	public FoodInventory(int food_id, String name, int amount, boolean isAvailability, boolean breakfast, boolean lunch,

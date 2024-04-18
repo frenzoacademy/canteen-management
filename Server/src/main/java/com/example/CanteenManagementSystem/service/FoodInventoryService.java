@@ -87,13 +87,4 @@ public class FoodInventoryService {
 	public void updateFood(FoodInventory food, Object object) {
 		foodInventoryRepository.save(food);
 	}
-
-//	public FoodInventory updateFood(FoodInventory food, MultipartFile file) throws IOException, SQLException {
-//		if (!file.isEmpty()) {
-//			byte[] photoBytes = file.getBytes();
-//			Blob photoBlob = new SerialBlob(photoBytes);
-//			food.setPhoto(photoBlob);
-//		}
-//		return foodInventoryRepository.save(food);
-//	}
 }
